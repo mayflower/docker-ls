@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"os"
 
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
@@ -38,19 +37,19 @@ func parseCommandLine() (cfg lib.Config) {
 func main() {
 	cfg := parseCommandLine()
 
-	connector := lib.NewRegistryConnector(cfg)
+	registryApi := lib.NewRegistryApi(cfg)
 
-	response, err := connector.Get("v2/_catalog")
+	listResult, err := registryApi.ListRepositories()
 
-	fmt.Println(err)
-
-	if err == nil {
-		if response.Close {
-			defer response.Body.Close()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		for repository := range listResult.Repositories() {
+			fmt.Println(repository.Name())
 		}
 
-		io.Copy(os.Stdout, response.Body)
-
-		fmt.Println()
+		if err := listResult.LastError(); err != nil {
+			fmt.Printf("\nERROR: %v\n", err)
+		}
 	}
 }

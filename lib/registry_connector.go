@@ -2,6 +2,7 @@ package lib
 
 import (
 	"net/http"
+	"net/url"
 	"strings"
 
 	"git.mayflower.de/vaillant-team/docker-ls/lib/auth"
@@ -13,10 +14,8 @@ type RegistryConnector struct {
 	authenticator auth.AuthenticatorInterface
 }
 
-func (r *RegistryConnector) Get(path string) (response *http.Response, err error) {
-	endpoint := strings.TrimRight(r.cfg.registryUrl.String(), "/") + "/" + strings.TrimLeft(path, "/")
-
-	request, err := http.NewRequest("GET", endpoint, strings.NewReader(""))
+func (r *RegistryConnector) Get(url *url.URL) (response *http.Response, err error) {
+	request, err := http.NewRequest("GET", url.String(), strings.NewReader(""))
 
 	if err != nil {
 		return
