@@ -12,9 +12,21 @@ type registryConnector struct {
 	cfg           Config
 	httpClient    *http.Client
 	authenticator auth.Authenticator
+	semaphore     chan int
+}
+
+func (r *registryConnector) AquireLock() {
+	r.semaphore <- 1
+}
+
+func (r *registryConnector) ReleaseLock() {
+	_ = <-r.semaphore
 }
 
 func (r *registryConnector) Get(url *url.URL) (response *http.Response, err error) {
+	r.AquireLock()
+	defer r.ReleaseLock()
+
 	request, err := http.NewRequest("GET", url.String(), strings.NewReader(""))
 
 	if err != nil {
@@ -55,6 +67,7 @@ func NewRegistryConnector(cfg Config) *registryConnector {
 	connector := registryConnector{
 		cfg:        cfg,
 		httpClient: http.DefaultClient,
+		semaphore:  make(chan int, cfg.maxConcurrentRequests),
 	}
 
 	connector.authenticator = auth.NewAuthenticator(connector.httpClient, &cfg.credentials)

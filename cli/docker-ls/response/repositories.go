@@ -6,19 +6,36 @@ import (
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
-type repositoryL0 string
+type RepositoryL0 string
 
-type repositoriesL0 struct {
-	Repositories []repositoryL0 `yaml:"repositories"`
+type RepositoriesL0 struct {
+	Repositories []RepositoryL0 `yaml:"repositories"`
 	mutex        sync.Mutex
 }
 
-func (r *repositoriesL0) AddRepository(repo lib.Repository) {
+func (r *RepositoriesL0) AddRepository(repo lib.Repository) {
 	r.mutex.Lock()
-	r.Repositories = append(r.Repositories, repositoryL0(repo.Name()))
+	r.Repositories = append(r.Repositories, RepositoryL0(repo.Name()))
 	r.mutex.Unlock()
 }
 
-func NewRepositoriesL0() *repositoriesL0 {
-	return new(repositoriesL0)
+func NewRepositoriesL0() *RepositoriesL0 {
+	return new(RepositoriesL0)
+}
+
+type RepositoryL1 *TagsL0
+
+type RepositoriesL1 struct {
+	Tags  []RepositoryL1 `yaml:"repositories"`
+	mutex sync.Mutex
+}
+
+func (r *RepositoriesL1) AddTags(tags *TagsL0) {
+	r.mutex.Lock()
+	r.Tags = append(r.Tags, RepositoryL1(tags))
+	r.mutex.Unlock()
+}
+
+func NewRepositoriesL1() *RepositoriesL1 {
+	return new(RepositoriesL1)
 }

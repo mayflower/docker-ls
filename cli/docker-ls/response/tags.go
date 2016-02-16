@@ -6,22 +6,22 @@ import (
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
-type tagL0 string
+type TagL0 string
 
-type tagsL0 struct {
+type TagsL0 struct {
 	RepositoryName string  `yaml:"repository"`
-	Tags           []tagL0 `yaml:"tags"`
+	Tags           []TagL0 `yaml:"tags"`
 	mutex          sync.Mutex
 }
 
-func (t *tagsL0) AddTag(tag lib.Tag) {
+func (t *TagsL0) AddTag(tag lib.Tag) {
 	t.mutex.Lock()
-	t.Tags = append(t.Tags, tagL0(tag.Name()))
+	t.Tags = append(t.Tags, TagL0(tag.Name()))
 	t.mutex.Unlock()
 }
 
-func NewTagsL0(repositoryName string) *tagsL0 {
-	return &tagsL0{
+func NewTagsL0(repositoryName string) *TagsL0 {
+	return &TagsL0{
 		RepositoryName: repositoryName,
 	}
 }

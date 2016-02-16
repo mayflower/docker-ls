@@ -27,9 +27,10 @@ func (u *urlValue) Set(value string) (err error) {
 }
 
 type Config struct {
-	registryUrl url.URL
-	credentials RegistryCredentials
-	pageSize    uint
+	registryUrl           url.URL
+	credentials           RegistryCredentials
+	pageSize              uint
+	maxConcurrentRequests uint
 }
 
 func (u *urlValue) String() string {
@@ -40,12 +41,16 @@ func (c *Config) BindToFlags(flags *flag.FlagSet) {
 	c.registryUrl = DEFAULT_REGISTRY_URL
 
 	flags.Var((*urlValue)(&c.registryUrl), "registry", "registry URL")
-	flags.UintVar(&c.pageSize, "page-size", 100, "page size for paginated requests")
+	flags.UintVar(&c.pageSize, "page-size", c.pageSize, "page size for paginated requests")
+	flags.UintVar(&c.maxConcurrentRequests, "max-requests", c.maxConcurrentRequests, "concurrent API request limit")
+
 	c.credentials.BindToFlags(flags)
 }
 
 func NewConfig() Config {
 	return Config{
-		registryUrl: DEFAULT_REGISTRY_URL,
+		registryUrl:           DEFAULT_REGISTRY_URL,
+		pageSize:              100,
+		maxConcurrentRequests: 5,
 	}
 }
