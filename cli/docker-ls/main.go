@@ -12,7 +12,7 @@ valid commands:
 
     repositories      List all repositories
     tags              List all tags for a single repository
-	tag               Fetch details for an individual tag
+    tag               Fetch details for an individual tag
 `)
 
 	os.Exit(0)

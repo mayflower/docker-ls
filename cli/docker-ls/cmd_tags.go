@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 
+	"git.mayflower.de/vaillant-team/docker-ls/cli/docker-ls/response"
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
@@ -32,12 +32,18 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 	registryApi := lib.NewRegistryApi(cfg)
 
 	listResult := registryApi.ListTags(repositoryName)
+	resp := response.NewTagsL0(repositoryName)
 
 	for tag := range listResult.Tags() {
-		fmt.Println(tag.Name())
+		resp.AddTag(tag)
 	}
 
 	err = listResult.LastError()
+	if err != nil {
+		return
+	}
+
+	err = yamlToStdout(resp)
 
 	return
 }

@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 
+	"git.mayflower.de/vaillant-team/docker-ls/cli/docker-ls/response"
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
@@ -24,12 +24,18 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 	registryApi := lib.NewRegistryApi(cfg)
 
 	listResult := registryApi.ListRepositories()
+	resp := response.NewRepositoriesL0()
 
 	for repository := range listResult.Repositories() {
-		fmt.Println(repository.Name())
+		resp.AddRepository(repository)
 	}
 
 	err = listResult.LastError()
+	if err != nil {
+		return
+	}
+
+	err = yamlToStdout(resp)
 
 	return
 }

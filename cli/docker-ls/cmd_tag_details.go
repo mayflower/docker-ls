@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 
+	"git.mayflower.de/vaillant-team/docker-ls/cli/docker-ls/response"
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
@@ -37,12 +37,7 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 		return
 	}
 
-	fmt.Printf(
-		"Repo: %s\nTag: %s\nContent Digest: %s\n",
-		tagDetails.RepositoryName(),
-		tagDetails.TagName(),
-		tagDetails.ContentDigest(),
-	)
+	err = yamlToStdout(response.NewTagDetailsL0(tagDetails))
 
 	return
 }
