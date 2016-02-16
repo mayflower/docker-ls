@@ -23,17 +23,13 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 
 	registryApi := lib.NewRegistryApi(cfg)
 
-	listResult, err := registryApi.ListRepositories()
+	listResult := registryApi.ListRepositories()
 
-	if err != nil {
-		return
-	} else {
-		for repository := range listResult.Repositories() {
-			fmt.Println(repository.Name())
-		}
-
-		err = listResult.LastError()
+	for repository := range listResult.Repositories() {
+		fmt.Println(repository.Name())
 	}
+
+	err = listResult.LastError()
 
 	return
 }

@@ -1,18 +1,12 @@
 package lib
 
 import (
-	"encoding/json"
 	"net/http"
-	"net/url"
 )
 
 type repositoryListResponse struct {
 	repositories chan Repository
 	err          error
-}
-
-type repositoryListJsonResponse struct {
-	Repositories *[]string `json:"repositories"`
 }
 
 func (r *repositoryListResponse) Repositories() <-chan Repository {
@@ -23,100 +17,68 @@ func (r *repositoryListResponse) LastError() error {
 	return r.err
 }
 
-func (r *registryApi) executeListRequest(url *url.URL, initialRequest bool) (response *http.Response, close bool, err error) {
-	response, err = r.connector.Get(url)
+func (r *repositoryListResponse) setLastError(err error) {
+	r.err = err
+}
 
-	if err != nil {
-		return
+func (r *repositoryListResponse) close() {
+	close(r.repositories)
+}
+
+type repositoryListJsonResponse struct {
+	Repositories []string `json:"repositories"`
+}
+
+func (r *repositoryListJsonResponse) validate() error {
+	if r.Repositories == nil {
+		return genericMalformedResponseError
 	}
 
-	close = response.Close
+	return nil
+}
 
+type repositoryListRequestContext struct{}
+
+func (r *repositoryListRequestContext) path() string {
+	return "v2/_catalog"
+}
+
+func (r *repositoryListRequestContext) validateApiResponse(response *http.Response, initialRequest bool) error {
 	switch response.StatusCode {
 	case http.StatusUnauthorized, http.StatusForbidden:
-		err = genericAuthorizationError
-		return
+		return genericAuthorizationError
 
 	case http.StatusNotFound:
 		if initialRequest {
-			err = NotImplementedByRemoteError("registry does not implement repository listings")
+			return NotImplementedByRemoteError("registry does not implement repository listings")
 		} else {
-			err = newInvalidStatusCodeError(response.StatusCode)
+			return newInvalidStatusCodeError(response.StatusCode)
 		}
-
-		return
 
 	case http.StatusOK:
+		return nil
 
 	default:
-		err = newInvalidStatusCodeError(response.StatusCode)
-		return
+		return newInvalidStatusCodeError(response.StatusCode)
 	}
-
-	return
 }
 
-func (r *registryApi) iterateRepositoryList(lastApiResponse *http.Response, listResponse *repositoryListResponse) (apiResponse *http.Response, more bool, err error) {
-	requestUrl, err := r.paginatedRequestEndpointUrl("v2/_catalog", lastApiResponse)
-
-	if err != nil {
-		return
+func (r *repositoryListRequestContext) processPartialResponse(response paginatedRequestResponse, apiResponse interface{}) {
+	for _, repositoryName := range apiResponse.(*repositoryListJsonResponse).Repositories {
+		response.(*repositoryListResponse).repositories <- newRepository(repositoryName)
 	}
-
-	apiResponse, needsClose, err := r.executeListRequest(requestUrl, lastApiResponse == nil)
-
-	if needsClose {
-		defer apiResponse.Body.Close()
-	}
-
-	if err != nil {
-		return
-	}
-
-	more = apiResponse.Header.Get("link") != ""
-
-	var jsonResponse repositoryListJsonResponse
-	decoder := json.NewDecoder(apiResponse.Body)
-	err = decoder.Decode(&jsonResponse)
-
-	if err != nil {
-		return
-	}
-
-	if jsonResponse.Repositories == nil {
-		err = genericMalformedResponseError
-		return
-	}
-
-	for _, repositoryName := range *jsonResponse.Repositories {
-		listResponse.repositories <- newRepository(repositoryName)
-	}
-
-	return
 }
 
-func (r *registryApi) ListRepositories() (response RepositoryListResponse, err error) {
-	listResponse := &repositoryListResponse{
-		repositories: make(chan Repository, r.pageSize()),
+func (r *repositoryListRequestContext) createResponse(api *registryApi) paginatedRequestResponse {
+	return &repositoryListResponse{
+		repositories: make(chan Repository, api.pageSize()),
 	}
-	response = listResponse
+}
 
-	var apiResponse *http.Response
-	apiResponse, more, err := r.iterateRepositoryList(apiResponse, listResponse)
+func (r *repositoryListRequestContext) createJsonResponse() validatable {
+	return new(repositoryListJsonResponse)
+}
 
-	go func() {
-		for more {
-			var err error
-			apiResponse, more, err = r.iterateRepositoryList(apiResponse, listResponse)
-
-			if err != nil {
-				listResponse.err = err
-				break
-			}
-		}
-
-		close(listResponse.repositories)
-	}()
-
-	return
+func (r *registryApi) ListRepositories() RepositoryListResponse {
+	return r.paginatedRequest(new(repositoryListRequestContext)).(*repositoryListResponse)
 }

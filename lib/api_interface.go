@@ -9,6 +9,17 @@ type RepositoryListResponse interface {
 	LastError() error
 }
 
+type Tag interface {
+	Name() string
+	RepositoryName() string
+}
+
+type TagListResponse interface {
+	Tags() <-chan Tag
+	LastError() error
+}
+
 type RegistryApi interface {
-	ListRepositories() (RepositoryListResponse, error)
+	ListRepositories() RepositoryListResponse
+	ListTags(repositoryName string) TagListResponse
 }
