@@ -14,6 +14,7 @@ func parseLinkToNextHeader(header string) (nextUrl *url.URL, err error) {
 
 	if len(match) != 1 {
 		err = errors.New(fmt.Sprintf("malformed link header: %s", header))
+		return
 	}
 
 	nextUrl, err = url.Parse(match[0][1])
