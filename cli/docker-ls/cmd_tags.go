@@ -42,7 +42,7 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 	return
 }
 
-func newtagsCmd(name string) (cmd *tagsCmd) {
+func newTagsCmd(name string) (cmd *tagsCmd) {
 	cmd = &tagsCmd{
 		flags: flag.NewFlagSet(name, flag.ExitOnError),
 	}

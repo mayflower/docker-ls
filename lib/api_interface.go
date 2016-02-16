@@ -19,7 +19,15 @@ type TagListResponse interface {
 	LastError() error
 }
 
+type TagDetails interface {
+	RawManifest() interface{}
+	ContentDigest() string
+	RepositoryName() string
+	TagName() string
+}
+
 type RegistryApi interface {
 	ListRepositories() RepositoryListResponse
 	ListTags(repositoryName string) TagListResponse
+	GetTagDetails(repository, reference string) (TagDetails, error)
 }

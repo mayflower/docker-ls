@@ -12,6 +12,7 @@ valid commands:
 
     repositories      List all repositories
     tags              List all tags for a single repository
+	tag               Fetch details for an individual tag
 `)
 
 	os.Exit(0)
@@ -31,7 +32,10 @@ func getCommand() command {
 		return newRepositoriesCmd("respositories")
 
 	case "tags":
-		return newtagsCmd("tags")
+		return newTagsCmd("tags")
+
+	case "tag":
+		return newTagDetailsCmd("tag")
 
 	default:
 		return nil
