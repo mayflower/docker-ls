@@ -26,7 +26,7 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 	}
 
 	registryApi := lib.NewRegistryApi(cfg)
-	var resp interface{}
+	var resp sortable
 
 	switch {
 	case level >= 1:
@@ -36,6 +36,11 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 		resp, err = r.listLevel0(registryApi)
 	}
 
+	if err != nil {
+		return
+	}
+
+	resp.Sort()
 	err = yamlToStdout(resp)
 
 	return

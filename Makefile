@@ -7,6 +7,7 @@ GO_SRCDIRS = cli lib
 GO_PACKAGE_PREFIX = git.mayflower.de/vaillant-team/docker-ls
 GO_PACKAGES = \
 	cli/docker-ls \
+	cli/docker-ls/response \
 	lib \
 	lib/auth
 GO_DEPENDENCIES = gopkg.in/yaml.v2

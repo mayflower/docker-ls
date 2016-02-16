@@ -43,6 +43,8 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 		return
 	}
 
+	resp.Sort()
+
 	err = yamlToStdout(resp)
 
 	return
