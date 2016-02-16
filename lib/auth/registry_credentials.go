@@ -1,6 +1,6 @@
 package auth
 
-type RegistryCredentialsInterface interface {
+type RegistryCredentials interface {
 	User() string
 	Password() string
 }

@@ -29,6 +29,7 @@ func (u *urlValue) Set(value string) (err error) {
 type Config struct {
 	registryUrl url.URL
 	credentials RegistryCredentials
+	pageSize    uint
 }
 
 func (u *urlValue) String() string {
@@ -39,6 +40,7 @@ func (c *Config) BindToFlags(flags *flag.FlagSet) {
 	c.registryUrl = DEFAULT_REGISTRY_URL
 
 	flags.Var((*urlValue)(&c.registryUrl), "registry", "registry URL")
+	flags.UintVar(&c.pageSize, "page-size", 100, "page size for paginated requests")
 	c.credentials.BindToFlags(flags)
 }
 

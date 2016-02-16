@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
-type RepositoryListResponse struct {
-	repositories chan *Repository
+type repositoryListResponse struct {
+	repositories chan Repository
 	err          error
 }
 
@@ -16,15 +15,15 @@ type repositoryListJsonResponse struct {
 	Repositories *[]string `json:"repositories"`
 }
 
-func (r *RepositoryListResponse) Repositories() <-chan *Repository {
+func (r *repositoryListResponse) Repositories() <-chan Repository {
 	return (r.repositories)
 }
 
-func (r *RepositoryListResponse) LastError() error {
+func (r *repositoryListResponse) LastError() error {
 	return r.err
 }
 
-func (r *RegistryApi) executeListRequest(url *url.URL, initialRequest bool) (response *http.Response, close bool, err error) {
+func (r *registryApi) executeListRequest(url *url.URL, initialRequest bool) (response *http.Response, close bool, err error) {
 	response, err = r.connector.Get(url)
 
 	if err != nil {
@@ -57,29 +56,11 @@ func (r *RegistryApi) executeListRequest(url *url.URL, initialRequest bool) (res
 	return
 }
 
-func (r *RegistryApi) iterateRepositoryList(lastApiResponse *http.Response, listResponse *RepositoryListResponse) (apiResponse *http.Response, more bool, err error) {
-	requestUrl := r.endpointUrl("v2/_catalog")
+func (r *registryApi) iterateRepositoryList(lastApiResponse *http.Response, listResponse *repositoryListResponse) (apiResponse *http.Response, more bool, err error) {
+	requestUrl, err := r.paginatedRequestEndpointUrl("v2/_catalog", lastApiResponse)
 
-	if lastApiResponse != nil {
-		linkHeader := lastApiResponse.Header.Get("link")
-
-		if linkHeader != "" {
-			// This is a hack to work around what looks like a bug in the registry:
-			// the supplied link URL currently lacks scheme and host
-			scheme, host := requestUrl.Scheme, requestUrl.Host
-
-			requestUrl, err = parseLinkToNextHeader(linkHeader)
-			requestUrl.Scheme = scheme
-			requestUrl.Host = host
-		}
-
-		if err != nil {
-			return
-		}
-	} else {
-		queryParams := requestUrl.Query()
-		queryParams.Set("n", strconv.Itoa(r.pageSize))
-		requestUrl.RawQuery = queryParams.Encode()
+	if err != nil {
+		return
 	}
 
 	apiResponse, needsClose, err := r.executeListRequest(requestUrl, lastApiResponse == nil)
@@ -114,26 +95,27 @@ func (r *RegistryApi) iterateRepositoryList(lastApiResponse *http.Response, list
 	return
 }
 
-func (r *RegistryApi) ListRepositories() (response *RepositoryListResponse, err error) {
-	response = &RepositoryListResponse{
-		repositories: make(chan *Repository, r.pageSize),
+func (r *registryApi) ListRepositories() (response RepositoryListResponse, err error) {
+	listResponse := &repositoryListResponse{
+		repositories: make(chan Repository, r.pageSize()),
 	}
+	response = listResponse
 
 	var apiResponse *http.Response
-	apiResponse, more, err := r.iterateRepositoryList(apiResponse, response)
+	apiResponse, more, err := r.iterateRepositoryList(apiResponse, listResponse)
 
 	go func() {
 		for more {
 			var err error
-			apiResponse, more, err = r.iterateRepositoryList(apiResponse, response)
+			apiResponse, more, err = r.iterateRepositoryList(apiResponse, listResponse)
 
 			if err != nil {
-				response.err = err
+				listResponse.err = err
 				break
 			}
 		}
 
-		close(response.repositories)
+		close(listResponse.repositories)
 	}()
 
 	return

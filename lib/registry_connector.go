@@ -8,13 +8,13 @@ import (
 	"git.mayflower.de/vaillant-team/docker-ls/lib/auth"
 )
 
-type RegistryConnector struct {
+type registryConnector struct {
 	cfg           Config
 	httpClient    *http.Client
-	authenticator auth.AuthenticatorInterface
+	authenticator auth.Authenticator
 }
 
-func (r *RegistryConnector) Get(url *url.URL) (response *http.Response, err error) {
+func (r *registryConnector) Get(url *url.URL) (response *http.Response, err error) {
 	request, err := http.NewRequest("GET", url.String(), strings.NewReader(""))
 
 	if err != nil {
@@ -51,8 +51,8 @@ func (r *RegistryConnector) Get(url *url.URL) (response *http.Response, err erro
 	return
 }
 
-func NewRegistryConnector(cfg Config) *RegistryConnector {
-	connector := RegistryConnector{
+func NewRegistryConnector(cfg Config) *registryConnector {
+	connector := registryConnector{
 		cfg:        cfg,
 		httpClient: http.DefaultClient,
 	}

@@ -7,13 +7,9 @@ import (
 	"strings"
 )
 
-type AuthenticatorInterface interface {
-	PerformRequest(*Challenge) (token string, err error)
-}
-
 type authenticator struct {
 	httpClient  *http.Client
-	credentials RegistryCredentialsInterface
+	credentials RegistryCredentials
 }
 
 func (a *authenticator) PerformRequest(c *Challenge) (token string, err error) {
@@ -58,7 +54,7 @@ func (a *authenticator) PerformRequest(c *Challenge) (token string, err error) {
 	return
 }
 
-func NewAuthenticator(client *http.Client, credentials RegistryCredentialsInterface) *authenticator {
+func NewAuthenticator(client *http.Client, credentials RegistryCredentials) Authenticator {
 	return &authenticator{
 		httpClient:  client,
 		credentials: credentials,

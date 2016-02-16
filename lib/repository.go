@@ -1,15 +1,15 @@
 package lib
 
-type Repository struct {
+type repository struct {
 	name string
 }
 
-func (r *Repository) Name() string {
+func (r *repository) Name() string {
 	return r.name
 }
 
-func newRepository(name string) *Repository {
-	return &Repository{
+func newRepository(name string) *repository {
+	return &repository{
 		name: name,
 	}
 }
