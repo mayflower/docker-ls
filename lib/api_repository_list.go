@@ -24,7 +24,7 @@ func (r *RepositoryListResponse) LastError() error {
 	return r.err
 }
 
-func (r *RegistryApi) executeListRequest(url *url.URL) (response *http.Response, close bool, err error) {
+func (r *RegistryApi) executeListRequest(url *url.URL, initialRequest bool) (response *http.Response, close bool, err error) {
 	response, err = r.connector.Get(url)
 
 	if err != nil {
@@ -39,7 +39,12 @@ func (r *RegistryApi) executeListRequest(url *url.URL) (response *http.Response,
 		return
 
 	case http.StatusNotFound:
-		err = NotImplementedByRemoteError("registry does not implement repository listings")
+		if initialRequest {
+			err = NotImplementedByRemoteError("registry does not implement repository listings")
+		} else {
+			err = newInvalidStatusCodeError(response.StatusCode)
+		}
+
 		return
 
 	case http.StatusOK:
@@ -77,7 +82,7 @@ func (r *RegistryApi) iterateRepositoryList(lastApiResponse *http.Response, list
 		requestUrl.RawQuery = queryParams.Encode()
 	}
 
-	apiResponse, needsClose, err := r.executeListRequest(requestUrl)
+	apiResponse, needsClose, err := r.executeListRequest(requestUrl, lastApiResponse == nil)
 
 	if needsClose {
 		defer apiResponse.Body.Close()
@@ -115,10 +120,11 @@ func (r *RegistryApi) ListRepositories() (response *RepositoryListResponse, err 
 	}
 
 	var apiResponse *http.Response
-	more := true
+	apiResponse, more, err := r.iterateRepositoryList(apiResponse, response)
 
 	go func() {
 		for more {
+			var err error
 			apiResponse, more, err = r.iterateRepositoryList(apiResponse, response)
 
 			if err != nil {

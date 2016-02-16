@@ -38,7 +38,7 @@ func (u *urlValue) String() string {
 func (c *Config) BindToFlags(flags *flag.FlagSet) {
 	c.registryUrl = DEFAULT_REGISTRY_URL
 
-	flags.Var((*urlValue)(&c.registryUrl), "registry-url", "registry URL")
+	flags.Var((*urlValue)(&c.registryUrl), "registry", "registry URL")
 	c.credentials.BindToFlags(flags)
 }
 
