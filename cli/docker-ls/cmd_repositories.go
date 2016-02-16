@@ -13,11 +13,11 @@ type repositoriesCmd struct {
 }
 
 func (r *repositoriesCmd) execute(argv []string) (err error) {
-	cfg := lib.NewConfig()
-	cfg.BindToFlags(r.flags)
+	libCfg := lib.NewConfig()
+	libCfg.BindToFlags(r.flags)
 
-	var level uint
-	r.flags.UintVar(&level, "level", 0, "level of detail (0-1)")
+	cfg := newConfig()
+	cfg.bindToFlags(r.flags)
 
 	err = r.flags.Parse(argv)
 
@@ -25,14 +25,14 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 		return
 	}
 
-	registryApi := lib.NewRegistryApi(cfg)
+	registryApi := lib.NewRegistryApi(libCfg)
 	var resp sortable
 
 	switch {
-	case level >= 1:
+	case cfg.recursionLevel >= 1:
 		resp, err = r.listLevel1(registryApi)
 
-	case level == 0:
+	case cfg.recursionLevel == 0:
 		resp, err = r.listLevel0(registryApi)
 	}
 
@@ -63,10 +63,11 @@ func (r *repositoriesCmd) listLevel1(api lib.RegistryApi) (resp *response.Reposi
 	repositoriesResult := api.ListRepositories()
 	resp = response.NewRepositoriesL1()
 
-	var wait sync.WaitGroup
 	errors := make(chan error)
 
 	go func() {
+		var wait sync.WaitGroup
+
 		for repository := range repositoriesResult.Repositories() {
 			wait.Add(1)
 

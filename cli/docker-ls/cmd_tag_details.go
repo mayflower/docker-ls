@@ -37,7 +37,7 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 		return
 	}
 
-	err = yamlToStdout(response.NewTagDetailsL0(tagDetails))
+	err = yamlToStdout(response.NewTagDetailsL0(tagDetails, true))
 
 	return
 }

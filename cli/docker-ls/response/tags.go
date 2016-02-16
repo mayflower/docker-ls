@@ -48,3 +48,45 @@ func NewTagsL0(repositoryName string) *TagsL0 {
 		RepositoryName: repositoryName,
 	}
 }
+
+type TagL1 *TagDetailsL0
+
+type TagCollectionL1 []TagL1
+
+func (t TagCollectionL1) Len() int {
+	return len(t)
+}
+
+func (t TagCollectionL1) Less(i, j int) bool {
+	return string(t[i].TagName) < string(t[j].TagName)
+}
+
+func (t TagCollectionL1) Swap(i, j int) {
+	tmp := t[i]
+	t[i] = t[j]
+	t[j] = tmp
+}
+
+type TagsL1 struct {
+	RepositoryName string `yaml:"repository"`
+	Tags           []TagL1
+	mutex          sync.Mutex
+}
+
+func (t *TagsL1) AddTag(tag lib.TagDetails) {
+	t.mutex.Lock()
+	t.Tags = append(t.Tags, NewTagDetailsL0(tag, false))
+	t.mutex.Unlock()
+}
+
+func (t *TagsL1) Sort() {
+	t.mutex.Lock()
+	sort.Sort(TagCollectionL1(t.Tags))
+	t.mutex.Unlock()
+}
+
+func NewTagsL1(repositoryName string) *TagsL1 {
+	return &TagsL1{
+		RepositoryName: repositoryName,
+	}
+}
