@@ -1,55 +1,55 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
-
-	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
-var flags *flag.FlagSet
-
-func init() {
-	flags = flag.NewFlagSet("default", flag.ExitOnError)
-	flags.Usage = usage
-}
-
 func usage() {
-	fmt.Print(`usage: docker-ls [options]
+	fmt.Print(`usage: docker-ls command [options]
 
-valid options:
+valid commands:
 
+    repositories      List all repositories
+    tags              List all tags for a single repository
 `)
 
-	flags.PrintDefaults()
+	os.Exit(0)
 }
 
-func parseCommandLine() (cfg lib.Config) {
-	cfg = lib.Config{}
-	cfg.BindToFlags(flags)
+func parseCommandLine() string {
+	if len(os.Args) <= 1 {
+		usage()
+	}
 
-	flags.Parse(os.Args[1:])
+	return os.Args[1]
+}
 
-	return
+func getCommand() command {
+	switch parseCommandLine() {
+	case "repositories":
+		return newRepositoriesCmd("respositories")
+
+	case "tags":
+		return newtagsCmd("tags")
+
+	default:
+		return nil
+	}
+
 }
 
 func main() {
-	cfg := parseCommandLine()
+	command := getCommand()
 
-	registryApi := lib.NewRegistryApi(cfg)
+	if command == nil {
+		usage()
+	}
 
-	listResult, err := registryApi.ListRepositories()
+	err := command.execute(os.Args[2:])
 
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		for repository := range listResult.Repositories() {
-			fmt.Println(repository.Name())
-		}
-
-		if err := listResult.LastError(); err != nil {
-			fmt.Printf("\nERROR: %v\n", err)
-		}
+		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+		os.Exit(1)
 	}
 }
