@@ -5,9 +5,9 @@ import (
 )
 
 type TagDetailsL0 struct {
-	RepositoryName string `yaml:"repository,omitempty"`
-	TagName        string `yaml:"tagName"`
-	ContentDigest  string `yaml:"digest"`
+	RepositoryName string `yaml:"repository,omitempty",json:"repository,omitempty"`
+	TagName        string `yaml:"tagName",json:"tagName"`
+	ContentDigest  string `yaml:"digest",json:"digest"`
 }
 
 func NewTagDetailsL0(tag lib.TagDetails, includeRepository bool) *TagDetailsL0 {

@@ -17,7 +17,10 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	libCfg.BindToFlags(r.flags)
 
 	cfg := newConfig()
-	cfg.bindToFlags(r.flags, OPTION_PROGRESS)
+	cfg.bindToFlags(r.flags, OPTION_PROGRESS|OPTION_JSON_OUTPUT)
+
+	rawManifest := false
+	r.flags.BoolVar(&rawManifest, "raw-manifest", rawManifest, "output raw manifest")
 
 	if len(argv) < 2 {
 		r.flags.Usage()
@@ -46,7 +49,11 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 		return
 	}
 
-	err = yamlToStdout(response.NewTagDetailsL0(tagDetails, true))
+	if rawManifest {
+		err = serializeToStdout(tagDetails.RawManifest(), cfg)
+	} else {
+		err = serializeToStdout(response.NewTagDetailsL0(tagDetails, true), cfg)
+	}
 
 	return
 }

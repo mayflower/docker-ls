@@ -26,8 +26,8 @@ func (t TagCollectionL0) Swap(i, j int) {
 }
 
 type TagsL0 struct {
-	RepositoryName string  `yaml:"repository"`
-	Tags           []TagL0 `yaml:"tags"`
+	RepositoryName string  `yaml:"repository",json:"repository"`
+	Tags           []TagL0 `yaml:"tags",json:"tags"`
 	mutex          sync.Mutex
 }
 
@@ -68,7 +68,7 @@ func (t TagCollectionL1) Swap(i, j int) {
 }
 
 type TagsL1 struct {
-	RepositoryName string `yaml:"repository"`
+	RepositoryName string `yaml:"repository",json:"repository"`
 	Tags           []TagL1
 	mutex          sync.Mutex
 }

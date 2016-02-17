@@ -52,7 +52,7 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 
 	resp.Sort()
 
-	err = yamlToStdout(resp)
+	err = serializeToStdout(resp, r.cfg)
 
 	if r.cfg.statistics {
 		dumpStatistics(registryApi.GetStatistics())

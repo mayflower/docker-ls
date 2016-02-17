@@ -26,7 +26,7 @@ func (r RepositoryCollectionL0) Swap(i, j int) {
 }
 
 type RepositoriesL0 struct {
-	Repositories []RepositoryL0 `yaml:"repositories"`
+	Repositories []RepositoryL0 `yaml:"repositories",json:"repositories"`
 	mutex        sync.Mutex
 }
 
@@ -65,7 +65,7 @@ func (r RepositoryCollectionL1) Swap(i, j int) {
 }
 
 type RepositoriesL1 struct {
-	Repositories []RepositoryL1 `yaml:"repositories"`
+	Repositories []RepositoryL1 `yaml:"repositories",json:"repositories"`
 	mutex        sync.Mutex
 }
 

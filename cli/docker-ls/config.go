@@ -8,6 +8,7 @@ const (
 	OPTION_RECURSION_LEVEL = 1 << iota
 	OPTION_STATISTICS
 	OPTION_PROGRESS
+	OPTION_JSON_OUTPUT
 )
 
 const (
@@ -19,6 +20,7 @@ type Config struct {
 	recursionLevel uint
 	statistics     bool
 	progress       bool
+	jsonOutput     bool
 }
 
 func (c *Config) bindToFlags(flags *flag.FlagSet, options uint) {
@@ -33,6 +35,10 @@ func (c *Config) bindToFlags(flags *flag.FlagSet, options uint) {
 	if options&OPTION_PROGRESS != 0 {
 		flags.BoolVar(&c.progress, "progress-indicator", c.progress, "show progress indicator")
 	}
+
+	if options&OPTION_JSON_OUTPUT != 0 {
+		flags.BoolVar(&c.jsonOutput, "json", c.jsonOutput, "output JSON instead of YAML")
+	}
 }
 
 func newConfig() *Config {
@@ -40,5 +46,6 @@ func newConfig() *Config {
 		recursionLevel: 0,
 		statistics:     false,
 		progress:       true,
+		jsonOutput:     false,
 	}
 }

@@ -15,7 +15,7 @@ type tagDetails struct {
 }
 
 func (t *tagDetails) RawManifest() interface{} {
-	return t.manifest
+	return t.rawManifest
 }
 
 func (t *tagDetails) ContentDigest() string {
