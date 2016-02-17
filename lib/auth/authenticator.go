@@ -10,9 +10,19 @@ import (
 type authenticator struct {
 	httpClient  *http.Client
 	credentials RegistryCredentials
+	cache       *tokenCache
 }
 
-func (a *authenticator) PerformRequest(c *Challenge) (token string, err error) {
+func (a *authenticator) Authenticate(c *Challenge, ignoreCached bool) (t Token, err error) {
+	if !ignoreCached {
+		value := a.cache.Get(c)
+
+		if value != "" {
+			t = newToken(value, false)
+			return
+		}
+	}
+
 	requestUrl := c.buildRequestUrl()
 
 	authRequest, err := http.NewRequest("GET", requestUrl.String(), strings.NewReader(""))
@@ -49,7 +59,8 @@ func (a *authenticator) PerformRequest(c *Challenge) (token string, err error) {
 		return
 	}
 
-	token = decodedResponse.Token
+	a.cache.Set(c, decodedResponse)
+	t = newToken(decodedResponse.Token, true)
 
 	return
 }
@@ -58,5 +69,6 @@ func NewAuthenticator(client *http.Client, credentials RegistryCredentials) Auth
 	return &authenticator{
 		httpClient:  client,
 		credentials: credentials,
+		cache:       newTokenCache(),
 	}
 }

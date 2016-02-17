@@ -50,17 +50,34 @@ func (r *registryConnector) Get(url *url.URL) (response *http.Response, err erro
 		return
 	}
 
-	token, err := r.authenticator.PerformRequest(challenge)
+	token, err := r.authenticator.Authenticate(challenge, false)
 
 	if err != nil {
 		return
 	}
 
-	request.Header.Set("Authorization", "Bearer "+token)
+	response, err = r.attemptRequestWithToken(request, token.Value())
 
-	response, err = r.httpClient.Do(request)
+	if err == nil &&
+		(response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden) &&
+		!token.Fresh() {
+
+		token, err = r.authenticator.Authenticate(challenge, true)
+
+		if err == nil {
+			return
+		}
+
+		response, err = r.attemptRequestWithToken(request, token.Value())
+	}
 
 	return
+}
+
+func (r *registryConnector) attemptRequestWithToken(request *http.Request, token string) (*http.Response, error) {
+	request.Header.Set("Authorization", "Bearer "+token)
+
+	return r.httpClient.Do(request)
 }
 
 func NewRegistryConnector(cfg Config) *registryConnector {
