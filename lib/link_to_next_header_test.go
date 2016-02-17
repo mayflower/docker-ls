@@ -26,7 +26,7 @@ func TestParse(t *testing.T) {
 	}
 }
 
-func TestOarseInvalid(t *testing.T) {
+func TestParseInvalid(t *testing.T) {
 	testcase := `<http://example.com/v2/_catalog?n=20&last=b; rel="next"`
 
 	_, err := parseLinkToNextHeader(testcase)
