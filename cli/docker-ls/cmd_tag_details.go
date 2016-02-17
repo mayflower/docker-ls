@@ -17,7 +17,7 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	libCfg.BindToFlags(r.flags)
 
 	cfg := newConfig()
-	cfg.bindToFlags(r.flags)
+	cfg.bindToFlags(r.flags, OPTION_PROGRESS)
 
 	if len(argv) < 2 {
 		r.flags.Usage()
@@ -33,8 +33,14 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 		return
 	}
 
+	progress := NewProgressIndicator(cfg)
+	progress.Start("requesting manifest")
+
 	registryApi := lib.NewRegistryApi(libCfg)
 	tagDetails, err := registryApi.GetTagDetails(repositoryName, reference)
+
+	progress.Progress()
+	progress.Finish("done")
 
 	if err != nil {
 		return

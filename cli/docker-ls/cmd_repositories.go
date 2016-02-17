@@ -10,14 +10,15 @@ import (
 
 type repositoriesCmd struct {
 	flags *flag.FlagSet
+	cfg   *Config
 }
 
 func (r *repositoriesCmd) execute(argv []string) (err error) {
 	libCfg := lib.NewConfig()
 	libCfg.BindToFlags(r.flags)
 
-	cfg := newConfig()
-	cfg.bindToFlags(r.flags)
+	r.cfg = newConfig()
+	r.cfg.bindToFlags(r.flags, OPTIONS_FULL)
 
 	err = r.flags.Parse(argv)
 
@@ -29,10 +30,10 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 	var resp sortable
 
 	switch {
-	case cfg.recursionLevel >= 1:
+	case r.cfg.recursionLevel >= 1:
 		resp, err = r.listLevel1(registryApi)
 
-	case cfg.recursionLevel == 0:
+	case r.cfg.recursionLevel == 0:
 		resp, err = r.listLevel0(registryApi)
 	}
 
@@ -43,7 +44,7 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 	resp.Sort()
 	err = yamlToStdout(resp)
 
-	if cfg.statistics {
+	if r.cfg.statistics {
 		dumpStatistics(registryApi.GetStatistics())
 	}
 
@@ -51,8 +52,13 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 }
 
 func (r *repositoriesCmd) listLevel0(api lib.RegistryApi) (resp *response.RepositoriesL0, err error) {
+	progress := NewProgressIndicator(r.cfg)
+	progress.Start("requesting list")
+
 	result := api.ListRepositories()
 	resp = response.NewRepositoriesL0()
+
+	progress.Progress()
 
 	for repository := range result.Repositories() {
 		resp.AddRepository(repository)
@@ -60,12 +66,17 @@ func (r *repositoriesCmd) listLevel0(api lib.RegistryApi) (resp *response.Reposi
 
 	err = result.LastError()
 
+	progress.Finish("done")
 	return
 }
 
 func (r *repositoriesCmd) listLevel1(api lib.RegistryApi) (resp *response.RepositoriesL1, err error) {
+	progress := NewProgressIndicator(r.cfg)
+	progress.Start("requesting list")
+
 	repositoriesResult := api.ListRepositories()
 	resp = response.NewRepositoriesL1()
+	progress.Progress()
 
 	errors := make(chan error)
 
@@ -77,6 +88,7 @@ func (r *repositoriesCmd) listLevel1(api lib.RegistryApi) (resp *response.Reposi
 
 			go func(repository lib.Repository) {
 				tagsResult := api.ListTags(repository.Name())
+				progress.Progress()
 				tagsL0 := response.NewTagsL0(repository.Name())
 
 				for tag := range tagsResult.Tags() {
@@ -108,6 +120,7 @@ func (r *repositoriesCmd) listLevel1(api lib.RegistryApi) (resp *response.Reposi
 		}
 	}
 
+	progress.Finish("done")
 	return
 }
 

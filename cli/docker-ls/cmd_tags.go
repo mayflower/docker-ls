@@ -12,14 +12,15 @@ import (
 type tagsCmd struct {
 	flags          *flag.FlagSet
 	repositoryName string
+	cfg            *Config
 }
 
 func (r *tagsCmd) execute(argv []string) (err error) {
 	libCfg := lib.NewConfig()
 	libCfg.BindToFlags(r.flags)
 
-	cfg := newConfig()
-	cfg.bindToFlags(r.flags)
+	r.cfg = newConfig()
+	r.cfg.bindToFlags(r.flags, OPTIONS_FULL)
 
 	if len(argv) == 0 {
 		r.flags.Usage()
@@ -38,10 +39,10 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 	var resp sortable
 
 	switch {
-	case cfg.recursionLevel == 0:
+	case r.cfg.recursionLevel == 0:
 		resp, err = r.listLevel0(registryApi)
 
-	case cfg.recursionLevel >= 1:
+	case r.cfg.recursionLevel >= 1:
 		resp, err = r.listLevel1(registryApi)
 	}
 
@@ -53,7 +54,7 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 
 	err = yamlToStdout(resp)
 
-	if cfg.statistics {
+	if r.cfg.statistics {
 		dumpStatistics(registryApi.GetStatistics())
 	}
 
@@ -61,7 +62,11 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 }
 
 func (r *tagsCmd) listLevel0(api lib.RegistryApi) (resp *response.TagsL0, err error) {
+	progress := NewProgressIndicator(r.cfg)
+	progress.Start("requesting list")
+
 	listResult := api.ListTags(r.repositoryName)
+	progress.Progress()
 	resp = response.NewTagsL0(r.repositoryName)
 
 	for tag := range listResult.Tags() {
@@ -70,11 +75,16 @@ func (r *tagsCmd) listLevel0(api lib.RegistryApi) (resp *response.TagsL0, err er
 
 	err = listResult.LastError()
 
+	progress.Finish("done")
 	return
 }
 
 func (r *tagsCmd) listLevel1(api lib.RegistryApi) (resp *response.TagsL1, err error) {
+	progress := NewProgressIndicator(r.cfg)
+	progress.Start("requesting list")
+
 	listResult := api.ListTags(r.repositoryName)
+	progress.Progress()
 	resp = response.NewTagsL1(r.repositoryName)
 
 	errors := make(chan error)
@@ -87,6 +97,7 @@ func (r *tagsCmd) listLevel1(api lib.RegistryApi) (resp *response.TagsL1, err er
 
 			go func(tag lib.Tag) {
 				tagDetails, err := api.GetTagDetails(tag.RepositoryName(), tag.Name())
+				progress.Progress()
 
 				if err == nil {
 					resp.AddTag(tagDetails)
@@ -113,6 +124,7 @@ func (r *tagsCmd) listLevel1(api lib.RegistryApi) (resp *response.TagsL1, err er
 		}
 	}
 
+	progress.Finish("done")
 	return
 }
 
