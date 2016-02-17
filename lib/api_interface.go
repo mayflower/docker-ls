@@ -19,11 +19,16 @@ type TagListResponse interface {
 	LastError() error
 }
 
+type LayerDetails interface {
+	ContentDigest() string
+}
+
 type TagDetails interface {
 	RawManifest() interface{}
 	ContentDigest() string
 	RepositoryName() string
 	TagName() string
+	Layers() []LayerDetails
 }
 
 type RegistryApi interface {

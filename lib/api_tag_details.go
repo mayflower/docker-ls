@@ -8,10 +8,17 @@ import (
 	"net/http"
 )
 
+type layerDetails string
+
+func (l layerDetails) ContentDigest() string {
+	return string(l)
+}
+
 type tagDetails struct {
 	manifest      *parsedManifest
 	rawManifest   interface{}
 	contentDigest string
+	layers        []LayerDetails
 }
 
 func (t *tagDetails) RawManifest() interface{} {
@@ -28,6 +35,18 @@ func (t *tagDetails) RepositoryName() string {
 
 func (t *tagDetails) TagName() string {
 	return t.manifest.Tag
+}
+
+func (t *tagDetails) Layers() []LayerDetails {
+	return t.layers
+}
+
+func (t *tagDetails) setLayers(layers []parsedLayer) {
+	t.layers = make([]LayerDetails, 0, len(layers))
+
+	for _, layer := range layers {
+		t.layers = append(t.layers, layerDetails(layer.BlobSum))
+	}
 }
 
 func (r *registryApi) GetTagDetails(repository, reference string) (details TagDetails, err error) {
@@ -78,11 +97,13 @@ func (r *registryApi) GetTagDetails(repository, reference string) (details TagDe
 		return
 	}
 
-	details = &tagDetails{
+	_details := &tagDetails{
 		manifest:      &manifest,
 		rawManifest:   rawManifest,
 		contentDigest: apiResponse.Header.Get("docker-content-digest"),
 	}
+	_details.setLayers(manifest.Layers)
+	details = _details
 
 	return
 }
