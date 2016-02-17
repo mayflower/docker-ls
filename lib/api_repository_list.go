@@ -79,6 +79,10 @@ func (r *repositoryListRequestContext) createJsonResponse() validatable {
 	return new(repositoryListJsonResponse)
 }
 
+func (r *repositoryListRequestContext) tokenCacheHint() string {
+	return cacheHintRegistryList()
+}
+
 func (r *registryApi) ListRepositories() RepositoryListResponse {
 	return r.paginatedRequest(new(repositoryListRequestContext)).(*repositoryListResponse)
 }

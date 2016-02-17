@@ -83,6 +83,10 @@ func (r *tagListRequestContext) createJsonResponse() validatable {
 	return new(tagListJsonResponse)
 }
 
+func (r *tagListRequestContext) tokenCacheHint() string {
+	return cacheHintTagList(r.repositoryName)
+}
+
 func (r *registryApi) ListTags(repositoryName string) TagListResponse {
 	ctx := tagListRequestContext{
 		repositoryName: repositoryName,

@@ -57,6 +57,10 @@ func (r *registryApi) pageSize() uint {
 	return r.cfg.pageSize
 }
 
+func (r *registryApi) GetStatistics() Statistics {
+	return r.connector.GetStatistics()
+}
+
 func NewRegistryApi(cfg Config) (registry RegistryApi) {
 	registry = &registryApi{
 		cfg:       cfg,

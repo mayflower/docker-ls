@@ -30,4 +30,5 @@ type RegistryApi interface {
 	ListRepositories() RepositoryListResponse
 	ListTags(repositoryName string) TagListResponse
 	GetTagDetails(repository, reference string) (TagDetails, error)
+	GetStatistics() Statistics
 }

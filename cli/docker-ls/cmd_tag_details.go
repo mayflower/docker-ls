@@ -13,8 +13,11 @@ type tagDetailsCmd struct {
 }
 
 func (r *tagDetailsCmd) execute(argv []string) (err error) {
-	cfg := lib.NewConfig()
-	cfg.BindToFlags(r.flags)
+	libCfg := lib.NewConfig()
+	libCfg.BindToFlags(r.flags)
+
+	cfg := newConfig()
+	cfg.bindToFlags(r.flags)
 
 	if len(argv) < 2 {
 		r.flags.Usage()
@@ -30,7 +33,7 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 		return
 	}
 
-	registryApi := lib.NewRegistryApi(cfg)
+	registryApi := lib.NewRegistryApi(libCfg)
 	tagDetails, err := registryApi.GetTagDetails(repositoryName, reference)
 
 	if err != nil {

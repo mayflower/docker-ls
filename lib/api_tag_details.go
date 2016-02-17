@@ -33,7 +33,7 @@ func (t *tagDetails) TagName() string {
 func (r *registryApi) GetTagDetails(repository, reference string) (details TagDetails, err error) {
 	url := r.endpointUrl(fmt.Sprintf("v2/%s/manifests/%s", repository, reference))
 
-	apiResponse, err := r.connector.Get(url)
+	apiResponse, err := r.connector.Get(url, cacheHintTagDetails(repository))
 
 	if err != nil {
 		return

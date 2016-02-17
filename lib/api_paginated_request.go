@@ -17,6 +17,7 @@ type paginatedRequestResponse interface {
 
 type paginatedRequestContext interface {
 	path() string
+	tokenCacheHint() string
 	validateApiResponse(response *http.Response, initialRequest bool) error
 	processPartialResponse(response paginatedRequestResponse, apiResponse interface{})
 	createResponse(api *registryApi) paginatedRequestResponse
@@ -24,7 +25,7 @@ type paginatedRequestContext interface {
 }
 
 func (r *registryApi) executePaginatedRequest(ctx paginatedRequestContext, url *url.URL, initialRequest bool) (response *http.Response, close bool, err error) {
-	response, err = r.connector.Get(url)
+	response, err = r.connector.Get(url, ctx.tokenCacheHint())
 
 	if err != nil {
 		return

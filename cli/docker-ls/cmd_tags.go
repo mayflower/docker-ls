@@ -53,6 +53,10 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 
 	err = yamlToStdout(resp)
 
+	if cfg.statistics {
+		dumpStatistics(registryApi.GetStatistics())
+	}
+
 	return
 }
 

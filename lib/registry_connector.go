@@ -13,6 +13,8 @@ type registryConnector struct {
 	httpClient    *http.Client
 	authenticator auth.Authenticator
 	semaphore     chan int
+	tokenCache    *tokenCache
+	stat          *statistics
 }
 
 func (r *registryConnector) AquireLock() {
@@ -23,21 +25,36 @@ func (r *registryConnector) ReleaseLock() {
 	_ = <-r.semaphore
 }
 
-func (r *registryConnector) Get(url *url.URL) (response *http.Response, err error) {
+func (r *registryConnector) Get(url *url.URL, hint string) (response *http.Response, err error) {
 	r.AquireLock()
 	defer r.ReleaseLock()
 
+	r.stat.Request()
+
+	var token auth.Token
 	request, err := http.NewRequest("GET", url.String(), strings.NewReader(""))
 
 	if err != nil {
 		return
 	}
 
-	resp, err := r.httpClient.Do(request)
+	if hint != "" {
+		if token = r.tokenCache.Get(hint); token != nil {
+			r.stat.CacheHitAtApiLevel()
+		} else {
+			r.stat.CacheMissAtApiLevel()
+		}
+	}
+
+	resp, err := r.attemptRequestWithToken(request, token)
 
 	if err != nil || resp.StatusCode != http.StatusUnauthorized {
 		response = resp
 		return
+	}
+
+	if token != nil {
+		r.stat.CacheFailAtApiLevel()
 	}
 
 	if resp.Close {
@@ -50,17 +67,27 @@ func (r *registryConnector) Get(url *url.URL) (response *http.Response, err erro
 		return
 	}
 
-	token, err := r.authenticator.Authenticate(challenge, false)
+	token, err = r.authenticator.Authenticate(challenge, false)
 
 	if err != nil {
 		return
 	}
 
-	response, err = r.attemptRequestWithToken(request, token.Value())
+	if token != nil {
+		if token.Fresh() {
+			r.stat.CacheMissAtAuthLevel()
+		} else {
+			r.stat.CacheHitAtAuthLevel()
+		}
+	}
+
+	response, err = r.attemptRequestWithToken(request, token)
 
 	if err == nil &&
-		(response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden) &&
+		response.StatusCode == http.StatusUnauthorized &&
 		!token.Fresh() {
+
+		r.stat.CacheFailAtAuthLevel()
 
 		token, err = r.authenticator.Authenticate(challenge, true)
 
@@ -68,16 +95,26 @@ func (r *registryConnector) Get(url *url.URL) (response *http.Response, err erro
 			return
 		}
 
-		response, err = r.attemptRequestWithToken(request, token.Value())
+		response, err = r.attemptRequestWithToken(request, token)
+	}
+
+	if hint != "" && err == nil && response.StatusCode != http.StatusUnauthorized {
+		r.tokenCache.Set(hint, token)
 	}
 
 	return
 }
 
-func (r *registryConnector) attemptRequestWithToken(request *http.Request, token string) (*http.Response, error) {
-	request.Header.Set("Authorization", "Bearer "+token)
+func (r *registryConnector) attemptRequestWithToken(request *http.Request, token auth.Token) (*http.Response, error) {
+	if token != nil {
+		request.Header.Set("Authorization", "Bearer "+token.Value())
+	}
 
 	return r.httpClient.Do(request)
+}
+
+func (r *registryConnector) GetStatistics() Statistics {
+	return r.stat
 }
 
 func NewRegistryConnector(cfg Config) *registryConnector {
@@ -85,6 +122,8 @@ func NewRegistryConnector(cfg Config) *registryConnector {
 		cfg:        cfg,
 		httpClient: http.DefaultClient,
 		semaphore:  make(chan int, cfg.maxConcurrentRequests),
+		tokenCache: newTokenCache(),
+		stat:       new(statistics),
 	}
 
 	connector.authenticator = auth.NewAuthenticator(connector.httpClient, &cfg.credentials)
