@@ -8,6 +8,7 @@ GO_PACKAGE_PREFIX = git.mayflower.de/vaillant-team/docker-ls
 GO_PACKAGES = \
 	cli/docker-ls \
 	cli/docker-ls/response \
+	cli/docker-rm \
 	lib \
 	lib/auth
 GO_DEPENDENCIES = gopkg.in/yaml.v2

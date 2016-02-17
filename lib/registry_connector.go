@@ -25,14 +25,22 @@ func (r *registryConnector) ReleaseLock() {
 	_ = <-r.semaphore
 }
 
-func (r *registryConnector) Get(url *url.URL, hint string) (response *http.Response, err error) {
+func (r *registryConnector) Delete(url *url.URL, hint string) (*http.Response, error) {
+	return r.Request("DELETE", url, hint)
+}
+
+func (r *registryConnector) Get(url *url.URL, hint string) (*http.Response, error) {
+	return r.Request("GET", url, hint)
+}
+
+func (r *registryConnector) Request(method string, url *url.URL, hint string) (response *http.Response, err error) {
 	r.AquireLock()
 	defer r.ReleaseLock()
 
 	r.stat.Request()
 
 	var token auth.Token
-	request, err := http.NewRequest("GET", url.String(), strings.NewReader(""))
+	request, err := http.NewRequest(method, url.String(), strings.NewReader(""))
 
 	if err != nil {
 		return

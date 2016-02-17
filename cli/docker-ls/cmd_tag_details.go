@@ -63,7 +63,7 @@ func newTagDetailsCmd(name string) (cmd *tagDetailsCmd) {
 		flags: flag.NewFlagSet(name, flag.ExitOnError),
 	}
 
-	cmd.flags.Usage = commandUsage(name, "<respository> <reference>", cmd.flags)
+	cmd.flags.Usage = commandUsage(name, "<respository> <reference>", "Inspect a singe tag.", cmd.flags)
 
 	return
 }

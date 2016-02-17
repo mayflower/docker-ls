@@ -129,7 +129,7 @@ func newRepositoriesCmd(name string) (cmd *repositoriesCmd) {
 		flags: flag.NewFlagSet(name, flag.ExitOnError),
 	}
 
-	cmd.flags.Usage = commandUsage(name, "", cmd.flags)
+	cmd.flags.Usage = commandUsage(name, "", "List all repositories.", cmd.flags)
 
 	return
 }

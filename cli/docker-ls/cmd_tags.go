@@ -133,7 +133,7 @@ func newTagsCmd(name string) (cmd *tagsCmd) {
 		flags: flag.NewFlagSet(name, flag.ExitOnError),
 	}
 
-	cmd.flags.Usage = commandUsage(name, "<respository>", cmd.flags)
+	cmd.flags.Usage = commandUsage(name, "<respository>", "Show all tags for a given repository.", cmd.flags)
 
 	return
 }

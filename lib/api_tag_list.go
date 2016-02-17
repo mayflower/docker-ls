@@ -32,7 +32,7 @@ type tagListJsonResponse struct {
 }
 
 func (r *tagListJsonResponse) validate() error {
-	if r.RespositoryName == "" || r.Tags == nil {
+	if r.RespositoryName == "" {
 		return genericMalformedResponseError
 	}
 
