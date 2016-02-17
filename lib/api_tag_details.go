@@ -49,10 +49,10 @@ func (t *tagDetails) setLayers(layers []parsedLayer) {
 	}
 }
 
-func (r *registryApi) GetTagDetails(repository, reference string) (details TagDetails, err error) {
-	url := r.endpointUrl(fmt.Sprintf("v2/%s/manifests/%s", repository, reference))
+func (r *registryApi) GetTagDetails(ref Refspec) (details TagDetails, err error) {
+	url := r.endpointUrl(fmt.Sprintf("v2/%s/manifests/%s", ref.Repository(), ref.Reference()))
 
-	apiResponse, err := r.connector.Get(url, cacheHintTagDetails(repository))
+	apiResponse, err := r.connector.Get(url, cacheHintTagDetails(ref.Repository()))
 
 	if err != nil {
 		return
@@ -67,7 +67,7 @@ func (r *registryApi) GetTagDetails(repository, reference string) (details TagDe
 		err = genericAuthorizationError
 
 	case http.StatusNotFound:
-		err = newNotFoundError(fmt.Sprintf("%s:%s : no such repository or reference", repository, reference))
+		err = newNotFoundError(fmt.Sprintf("%v: : no such repository or reference", ref))
 
 	case http.StatusOK:
 

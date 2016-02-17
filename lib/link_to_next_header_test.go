@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestParse(t *testing.T) {
+func TestLinkHeaderParse(t *testing.T) {
 	testcase := `<http://example.com/v2/_catalog?n=20&last=b>; rel="next"`
 
 	url, err := parseLinkToNextHeader(testcase)
@@ -26,7 +26,7 @@ func TestParse(t *testing.T) {
 	}
 }
 
-func TestParseInvalid(t *testing.T) {
+func TestLinkHeaderParseInvalid(t *testing.T) {
 	testcase := `<http://example.com/v2/_catalog?n=20&last=b; rel="next"`
 
 	_, err := parseLinkToNextHeader(testcase)

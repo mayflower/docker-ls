@@ -8,7 +8,7 @@ import (
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
-const USAGE_TEMPLATE = `usage: docker-rm <repository> <reference> [options]
+const USAGE_TEMPLATE = `usage: docker-rm <repository:reference> [options]
 
 Delete a tag in a given repository.
 
@@ -28,22 +28,31 @@ func usage() {
 	flags.PrintDefaults()
 }
 
-func main() {
+func dispatch() (err error) {
 	libCfg := lib.NewConfig()
 	libCfg.BindToFlags(flags)
 
-	if len(os.Args) < 3 {
+	if len(os.Args) < 2 {
 		usage()
 		os.Exit(0)
 	}
 
-	repository, reference := os.Args[1], os.Args[2]
+	ref := lib.EmptyRefspec()
+	err = ref.Set(os.Args[1])
+	if err != nil {
+		return
+	}
 
-	flags.Parse(os.Args[3:])
+	flags.Parse(os.Args[2:])
 
 	api := lib.NewRegistryApi(libCfg)
+	err = api.DeleteTag(ref)
 
-	if err := api.DeleteTag(repository, reference); err == nil {
+	return
+}
+
+func main() {
+	if err := dispatch(); err == nil {
 		fmt.Println("...Tag deleted successfully!")
 	} else {
 		fmt.Printf("ERROR: %v\n", err)

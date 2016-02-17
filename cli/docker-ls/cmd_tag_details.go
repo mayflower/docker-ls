@@ -22,15 +22,18 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	rawManifest := false
 	r.flags.BoolVar(&rawManifest, "raw-manifest", rawManifest, "output raw manifest")
 
-	if len(argv) < 2 {
+	if len(argv) < 1 {
 		r.flags.Usage()
 		os.Exit(1)
 	}
 
-	repositoryName := argv[0]
-	reference := argv[1]
+	ref := lib.EmptyRefspec()
+	err = ref.Set(argv[0])
+	if err != nil {
+		return
+	}
 
-	err = r.flags.Parse(argv[2:])
+	err = r.flags.Parse(argv[1:])
 
 	if err != nil {
 		return
@@ -40,7 +43,7 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	progress.Start("requesting manifest")
 
 	registryApi := lib.NewRegistryApi(libCfg)
-	tagDetails, err := registryApi.GetTagDetails(repositoryName, reference)
+	tagDetails, err := registryApi.GetTagDetails(ref)
 
 	progress.Progress()
 	progress.Finish("done")
@@ -63,7 +66,7 @@ func newTagDetailsCmd(name string) (cmd *tagDetailsCmd) {
 		flags: flag.NewFlagSet(name, flag.ExitOnError),
 	}
 
-	cmd.flags.Usage = commandUsage(name, "<respository> <reference>", "Inspect a singe tag.", cmd.flags)
+	cmd.flags.Usage = commandUsage(name, "<respository:reference>", "Inspect a singe tag.", cmd.flags)
 
 	return
 }

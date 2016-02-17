@@ -34,7 +34,7 @@ type TagDetails interface {
 type RegistryApi interface {
 	ListRepositories() RepositoryListResponse
 	ListTags(repositoryName string) TagListResponse
-	GetTagDetails(repository, reference string) (TagDetails, error)
-	DeleteTag(repository, reference string) error
+	GetTagDetails(ref Refspec) (TagDetails, error)
+	DeleteTag(ref Refspec) error
 	GetStatistics() Statistics
 }

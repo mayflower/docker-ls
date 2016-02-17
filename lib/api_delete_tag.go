@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-func (r *registryApi) DeleteTag(repository, reference string) (err error) {
-	response, err := r.connector.Delete(r.endpointUrl(fmt.Sprintf("/v2/%s/manifests/%s", repository, reference)), "")
+func (r *registryApi) DeleteTag(ref Refspec) (err error) {
+	response, err := r.connector.Delete(r.endpointUrl(fmt.Sprintf("/v2/%s/manifests/%s", ref.Repository(), ref.Reference())), "")
 
 	if err != nil {
 		return
@@ -17,7 +17,7 @@ func (r *registryApi) DeleteTag(repository, reference string) (err error) {
 		err = genericAuthorizationError
 
 	case http.StatusNotFound:
-		err = newNotFoundError(fmt.Sprintf("%s:%s : no such repository or reference", repository, reference))
+		err = newNotFoundError(fmt.Sprintf("%v : no such repository or reference", ref))
 
 	case http.StatusBadRequest:
 		err = newInvalidRequestError("invalid request --- make sure that your reference is a content digest")

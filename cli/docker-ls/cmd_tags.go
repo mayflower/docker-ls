@@ -96,7 +96,7 @@ func (r *tagsCmd) listLevel1(api lib.RegistryApi) (resp *response.TagsL1, err er
 			wait.Add(1)
 
 			go func(tag lib.Tag) {
-				tagDetails, err := api.GetTagDetails(tag.RepositoryName(), tag.Name())
+				tagDetails, err := api.GetTagDetails(lib.NewRefspec(tag.RepositoryName(), tag.Name()))
 				progress.Progress()
 
 				if err == nil {
