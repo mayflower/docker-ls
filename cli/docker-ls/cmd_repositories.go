@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 	"sync"
 
 	"git.mayflower.de/vaillant-team/docker-ls/cli/docker-ls/response"
@@ -21,9 +22,13 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 	r.cfg.bindToFlags(r.flags, OPTIONS_FULL)
 
 	err = r.flags.Parse(argv)
-
 	if err != nil {
 		return
+	}
+
+	if len(r.flags.Args()) != 0 {
+		r.flags.Usage()
+		os.Exit(1)
 	}
 
 	registryApi := lib.NewRegistryApi(libCfg)

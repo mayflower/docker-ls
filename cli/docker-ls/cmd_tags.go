@@ -22,18 +22,17 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 	r.cfg = newConfig()
 	r.cfg.bindToFlags(r.flags, OPTIONS_FULL)
 
-	if len(argv) == 0 {
-		r.flags.Usage()
-		os.Exit(1)
-	}
-
-	r.repositoryName = argv[0]
-
-	err = r.flags.Parse(argv[1:])
-
+	err = r.flags.Parse(argv)
 	if err != nil {
 		return
 	}
+
+	args := r.flags.Args()
+	if len(args) != 1 {
+		r.flags.Usage()
+		os.Exit(1)
+	}
+	r.repositoryName = args[0]
 
 	registryApi := lib.NewRegistryApi(libCfg)
 	var resp sortable

@@ -22,19 +22,19 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	rawManifest := false
 	r.flags.BoolVar(&rawManifest, "raw-manifest", rawManifest, "output raw manifest")
 
-	if len(argv) < 1 {
+	err = r.flags.Parse(argv)
+	if err != nil {
+		return
+	}
+
+	args := r.flags.Args()
+	if len(args) != 1 {
 		r.flags.Usage()
 		os.Exit(1)
 	}
 
 	ref := lib.EmptyRefspec()
-	err = ref.Set(argv[0])
-	if err != nil {
-		return
-	}
-
-	err = r.flags.Parse(argv[1:])
-
+	err = ref.Set(args[0])
 	if err != nil {
 		return
 	}

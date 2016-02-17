@@ -15,7 +15,7 @@ valid commands:
     tag               Fetch details for an individual tag
 `)
 
-	os.Exit(0)
+	os.Exit(1)
 }
 
 func parseCommandLine() string {
