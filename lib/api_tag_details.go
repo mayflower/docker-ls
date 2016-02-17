@@ -67,7 +67,7 @@ func (r *registryApi) GetTagDetails(ref Refspec) (details TagDetails, err error)
 		err = genericAuthorizationError
 
 	case http.StatusNotFound:
-		err = newNotFoundError(fmt.Sprintf("%v: : no such repository or reference", ref))
+		err = newNotFoundError(fmt.Sprintf("%v : no such repository or reference", ref))
 
 	case http.StatusOK:
 
