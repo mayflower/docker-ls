@@ -27,6 +27,7 @@ execute_go = GOPATH=`pwd`/$(GO_BUILDDIR) $(GO) $(1) $(2) $(packages)
 all: install
 
 install: $(GO_BUILDDIR)
+	$(call execute_go,generate)
 	$(call execute_go,install,$(GO_BUILDFLAGS))
 
 fmt: $(GO_BUILDDIR)

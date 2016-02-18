@@ -1,2 +1,3 @@
 build
 docker-ls.debug
+lib/dynamic_version.go

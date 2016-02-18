@@ -28,11 +28,23 @@ func usage() {
 	flags.PrintDefaults()
 }
 
+func version() {
+	fmt.Printf("version: %s\n", lib.Version())
+}
+
 func dispatch() (err error) {
 	libCfg := lib.NewConfig()
 	libCfg.BindToFlags(flags)
 
-	flags.Parse(os.Args[2:])
+	showVersion := false
+	flags.BoolVar(&showVersion, "version", false, "show version and exit")
+
+	flags.Parse(os.Args[1:])
+
+	if showVersion {
+		version()
+		os.Exit(0)
+	}
 
 	args := flags.Args()
 	if len(args) != 1 {

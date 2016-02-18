@@ -10,9 +10,10 @@ func usage() {
 
 valid commands:
 
-    repositories      List all repositories
-    tags              List all tags for a single repository
-    tag               Fetch details for an individual tag
+    repositories    List all repositories
+    tags            List all tags for a single repository
+    tag             Fetch details for an individual tag
+    version         Show version
 `)
 
 	os.Exit(1)
@@ -36,6 +37,9 @@ func getCommand() command {
 
 	case "tag":
 		return newTagDetailsCmd("tag")
+
+	case "version":
+		return newVersionCmd()
 
 	default:
 		return nil
