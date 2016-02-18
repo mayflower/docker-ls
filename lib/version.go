@@ -1,6 +1,6 @@
 package lib
 
-var staticVersion string = "not available"
+var staticVersion string = "not available --- use go generate and rebuild"
 var dynamicVersion *string
 
 func Version() string {
