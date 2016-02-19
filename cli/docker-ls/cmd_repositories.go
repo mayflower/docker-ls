@@ -93,13 +93,13 @@ func (r *repositoriesCmd) listLevel1(api lib.RegistryApi) (resp *response.Reposi
 
 			go func(repository lib.Repository) {
 				tagsResult := api.ListTags(repository.Name())
-				progress.Progress()
 				tagsL0 := response.NewTagsL0(repository.Name())
 
 				for tag := range tagsResult.Tags() {
 					tagsL0.AddTag(tag)
 				}
 
+				progress.Progress()
 				resp.AddTags(tagsL0)
 
 				if err := tagsResult.LastError(); err != nil {
