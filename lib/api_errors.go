@@ -11,7 +11,7 @@ type InvalidStatusCodeError string
 type NotFoundError string
 type InvalidRequestError string
 
-var genericAuthorizationError AutorizationError = "autorization failed"
+var genericAuthorizationError AutorizationError = "autorization rejected by registry"
 var genericMalformedResponseError MalformedResponseError = "malformed response"
 
 func (e AutorizationError) Error() string {

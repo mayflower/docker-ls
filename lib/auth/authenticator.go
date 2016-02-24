@@ -49,7 +49,7 @@ func (a *authenticator) Authenticate(c *Challenge, ignoreCached bool) (t Token, 
 	}
 
 	if authResponse.StatusCode != http.StatusOK {
-		err = errors.New(fmt.Sprintf("authentication failed with code %d", authResponse.StatusCode))
+		err = errors.New(fmt.Sprintf("authentification against auth server failed with code %d", authResponse.StatusCode))
 		return
 	}
 
