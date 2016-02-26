@@ -8,7 +8,7 @@ import (
 	"git.mayflower.de/vaillant-team/docker-ls/lib"
 )
 
-const USAGE_TEMPLATE = `usage: [options] docker-rm <repository:reference>
+const USAGE_TEMPLATE = `usage: docker-rm [options] <repository:reference>
 
 Delete a tag in a given repository.
 
