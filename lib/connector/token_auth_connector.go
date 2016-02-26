@@ -1,6 +1,7 @@
 package connector
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -9,21 +10,12 @@ import (
 )
 
 type tokenAuthConnector struct {
-	cfg           TokenAuthConfig
+	cfg           Config
 	httpClient    *http.Client
 	authenticator auth.Authenticator
-	semaphore     chan int
+	semaphore     semaphore
 	tokenCache    *tokenCache
 	stat          *statistics
-	basicAuth     bool
-}
-
-func (r *tokenAuthConnector) AquireLock() {
-	r.semaphore <- 1
-}
-
-func (r *tokenAuthConnector) ReleaseLock() {
-	_ = <-r.semaphore
 }
 
 func (r *tokenAuthConnector) Delete(url *url.URL, hint string) (*http.Response, error) {
@@ -35,8 +27,8 @@ func (r *tokenAuthConnector) Get(url *url.URL, hint string) (*http.Response, err
 }
 
 func (r *tokenAuthConnector) Request(method string, url *url.URL, hint string) (response *http.Response, err error) {
-	r.AquireLock()
-	defer r.ReleaseLock()
+	r.semaphore.Lock()
+	defer r.semaphore.Unlock()
 
 	r.stat.Request()
 
@@ -73,6 +65,9 @@ func (r *tokenAuthConnector) Request(method string, url *url.URL, hint string) (
 	challenge, err := auth.ParseChallenge(resp.Header.Get("www-authenticate"))
 
 	if err != nil {
+		err = errors.New(err.Error() +
+			" Are you shure that you are using the correct (token) auth scheme?")
+
 		return
 	}
 
@@ -126,11 +121,11 @@ func (r *tokenAuthConnector) GetStatistics() Statistics {
 	return r.stat
 }
 
-func NewTokenAuthConnector(cfg TokenAuthConfig) *tokenAuthConnector {
+func NewTokenAuthConnector(cfg Config) Connector {
 	connector := tokenAuthConnector{
 		cfg:        cfg,
 		httpClient: http.DefaultClient,
-		semaphore:  make(chan int, cfg.MaxConcurrentRequests()),
+		semaphore:  newSemaphore(cfg.MaxConcurrentRequests()),
 		tokenCache: newTokenCache(),
 		stat:       new(statistics),
 	}
