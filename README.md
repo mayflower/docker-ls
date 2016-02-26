@@ -118,4 +118,4 @@ Some remarks:
 
 # License
 
-`Docker-ls` is distributed under the terms of the MIT license.
+Docker-ls is distributed under the terms of the MIT license.
