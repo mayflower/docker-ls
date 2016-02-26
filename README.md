@@ -54,7 +54,7 @@ as JSON.
 Three subcommands are available
 
  * `docker-ls repositories` Obtains a list of repositories on the server.
-   **This is not supported by the official docker hub.**
+   **This is not supported by the official [docker hub](https://hub.docker.com/).**
  * `docker-ls tags` Lists all tags in a a particular repository.
  * `docker-ls tag` Inspect a particular tag. This command displays a condensed version
    of the corresponding manifest by default, but the `--raw-manifest` option can be
@@ -66,7 +66,8 @@ Three subcommands are available
 This list is not exhaustive; please consult the command line (`-h`) help for all options.
 
  * `--registry <url>` Connect to the registry at <url>. The URL must include the protocol
-   (http / https).
+   (http / https). By default, `docker-ls` targets the official
+   [docker hub](https://hub.docker.com/).
  * `--user <user>` Username for authentication.
  * `--password <password>` Password for authentication.
  * `--level <depth>` The `repositories` and `tags` subcommands support this option
