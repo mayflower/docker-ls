@@ -3,6 +3,8 @@ package lib
 import (
 	"flag"
 	"net/url"
+
+	"git.mayflower.de/vaillant-team/docker-ls/lib/auth"
 )
 
 var DEFAULT_REGISTRY_URL url.URL
@@ -45,6 +47,14 @@ func (c *Config) BindToFlags(flags *flag.FlagSet) {
 	flags.UintVar(&c.maxConcurrentRequests, "max-requests", c.maxConcurrentRequests, "concurrent API request limit")
 
 	c.credentials.BindToFlags(flags)
+}
+
+func (c *Config) MaxConcurrentRequests() uint {
+	return c.maxConcurrentRequests
+}
+
+func (c *Config) Credentials() auth.RegistryCredentials {
+	return &c.credentials
 }
 
 func NewConfig() Config {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"git.mayflower.de/vaillant-team/docker-ls/lib"
+	"git.mayflower.de/vaillant-team/docker-ls/lib/connector"
 )
 
 const STATISTICS_TEMPLATE = `Statistics:
@@ -21,7 +21,7 @@ Token cache fails:
     Auth level:      %d
 `
 
-func dumpStatistics(statistics lib.Statistics) {
+func dumpStatistics(statistics connector.Statistics) {
 	fmt.Fprintf(os.Stderr, STATISTICS_TEMPLATE,
 		statistics.Requests(),
 		statistics.TokenCacheHitsAtApiLevel(),

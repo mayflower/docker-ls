@@ -4,11 +4,13 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"git.mayflower.de/vaillant-team/docker-ls/lib/connector"
 )
 
 type registryApi struct {
 	cfg       Config
-	connector *registryConnector
+	connector connector.Connector
 }
 
 func (r *registryApi) endpointUrl(path string) *url.URL {
@@ -57,15 +59,16 @@ func (r *registryApi) pageSize() uint {
 	return r.cfg.pageSize
 }
 
-func (r *registryApi) GetStatistics() Statistics {
+func (r *registryApi) GetStatistics() connector.Statistics {
 	return r.connector.GetStatistics()
 }
 
-func NewRegistryApi(cfg Config) (registry RegistryApi) {
-	registry = &registryApi{
-		cfg:       cfg,
-		connector: NewRegistryConnector(cfg),
+func NewRegistryApi(cfg Config) RegistryApi {
+	registry := &registryApi{
+		cfg: cfg,
 	}
 
-	return
+	registry.connector = createConnector(&registry.cfg)
+
+	return registry
 }

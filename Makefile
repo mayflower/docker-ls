@@ -10,7 +10,8 @@ GO_PACKAGES = \
 	cli/docker-ls/response \
 	cli/docker-rm \
 	lib \
-	lib/auth
+	lib/auth \
+	lib/connector
 GO_DEPENDENCIES = gopkg.in/yaml.v2
 
 GO_DEBUG_MAIN = git.mayflower.de/vaillant-team/docker-ls/cli/docker-ls

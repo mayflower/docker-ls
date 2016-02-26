@@ -1,4 +1,4 @@
-package lib
+package connector
 
 import (
 	"net/http"
@@ -8,32 +8,33 @@ import (
 	"git.mayflower.de/vaillant-team/docker-ls/lib/auth"
 )
 
-type registryConnector struct {
-	cfg           Config
+type tokenAuthConnector struct {
+	cfg           TokenAuthConfig
 	httpClient    *http.Client
 	authenticator auth.Authenticator
 	semaphore     chan int
 	tokenCache    *tokenCache
 	stat          *statistics
+	basicAuth     bool
 }
 
-func (r *registryConnector) AquireLock() {
+func (r *tokenAuthConnector) AquireLock() {
 	r.semaphore <- 1
 }
 
-func (r *registryConnector) ReleaseLock() {
+func (r *tokenAuthConnector) ReleaseLock() {
 	_ = <-r.semaphore
 }
 
-func (r *registryConnector) Delete(url *url.URL, hint string) (*http.Response, error) {
+func (r *tokenAuthConnector) Delete(url *url.URL, hint string) (*http.Response, error) {
 	return r.Request("DELETE", url, hint)
 }
 
-func (r *registryConnector) Get(url *url.URL, hint string) (*http.Response, error) {
+func (r *tokenAuthConnector) Get(url *url.URL, hint string) (*http.Response, error) {
 	return r.Request("GET", url, hint)
 }
 
-func (r *registryConnector) Request(method string, url *url.URL, hint string) (response *http.Response, err error) {
+func (r *tokenAuthConnector) Request(method string, url *url.URL, hint string) (response *http.Response, err error) {
 	r.AquireLock()
 	defer r.ReleaseLock()
 
@@ -113,7 +114,7 @@ func (r *registryConnector) Request(method string, url *url.URL, hint string) (r
 	return
 }
 
-func (r *registryConnector) attemptRequestWithToken(request *http.Request, token auth.Token) (*http.Response, error) {
+func (r *tokenAuthConnector) attemptRequestWithToken(request *http.Request, token auth.Token) (*http.Response, error) {
 	if token != nil {
 		request.Header.Set("Authorization", "Bearer "+token.Value())
 	}
@@ -121,20 +122,20 @@ func (r *registryConnector) attemptRequestWithToken(request *http.Request, token
 	return r.httpClient.Do(request)
 }
 
-func (r *registryConnector) GetStatistics() Statistics {
+func (r *tokenAuthConnector) GetStatistics() Statistics {
 	return r.stat
 }
 
-func NewRegistryConnector(cfg Config) *registryConnector {
-	connector := registryConnector{
+func NewTokenAuthConnector(cfg TokenAuthConfig) *tokenAuthConnector {
+	connector := tokenAuthConnector{
 		cfg:        cfg,
 		httpClient: http.DefaultClient,
-		semaphore:  make(chan int, cfg.maxConcurrentRequests),
+		semaphore:  make(chan int, cfg.MaxConcurrentRequests()),
 		tokenCache: newTokenCache(),
 		stat:       new(statistics),
 	}
 
-	connector.authenticator = auth.NewAuthenticator(connector.httpClient, &cfg.credentials)
+	connector.authenticator = auth.NewAuthenticator(connector.httpClient, cfg.Credentials())
 
 	return &connector
 }

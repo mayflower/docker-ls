@@ -1,5 +1,9 @@
 package lib
 
+import (
+	"git.mayflower.de/vaillant-team/docker-ls/lib/connector"
+)
+
 type Repository interface {
 	Name() string
 }
@@ -36,5 +40,5 @@ type RegistryApi interface {
 	ListTags(repositoryName string) TagListResponse
 	GetTagDetails(ref Refspec) (TagDetails, error)
 	DeleteTag(ref Refspec) error
-	GetStatistics() Statistics
+	GetStatistics() connector.Statistics
 }
