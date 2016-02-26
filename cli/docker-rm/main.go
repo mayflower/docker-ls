@@ -58,7 +58,11 @@ func dispatch() (err error) {
 		return
 	}
 
-	api := lib.NewRegistryApi(libCfg)
+	api, err := lib.NewRegistryApi(libCfg)
+	if err != nil {
+		return
+	}
+
 	err = api.DeleteTag(ref)
 
 	return

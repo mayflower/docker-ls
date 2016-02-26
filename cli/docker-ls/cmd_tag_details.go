@@ -47,7 +47,11 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	progress := NewProgressIndicator(cfg)
 	progress.Start("requesting manifest")
 
-	registryApi := lib.NewRegistryApi(libCfg)
+	registryApi, err := lib.NewRegistryApi(libCfg)
+	if err != nil {
+		return
+	}
+
 	tagDetails, err := registryApi.GetTagDetails(ref)
 
 	progress.Progress()

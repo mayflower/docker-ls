@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"errors"
 	"flag"
 	"net/url"
 
@@ -63,6 +64,42 @@ func (c *Config) Credentials() auth.RegistryCredentials {
 
 func (c *Config) AllowInsecure() bool {
 	return c.allowInsecure
+}
+
+func (c *Config) SetUrl(url url.URL) {
+	c.registryUrl = url
+}
+
+func (c *Config) SetCredentials(credentials RegistryCredentials) {
+	c.credentials = credentials
+}
+
+func (c *Config) SetPagesize(pageSize uint) {
+	c.pageSize = pageSize
+}
+
+func (c *Config) SetMaxConcurrentRequests(maxRequests uint) {
+	c.maxConcurrentRequests = maxRequests
+}
+
+func (c *Config) SetUseBasicAuth(basicAuth bool) {
+	c.basicAuth = basicAuth
+}
+
+func (c *Config) SetAllowInsecure(allowInsecure bool) {
+	c.allowInsecure = allowInsecure
+}
+
+func (c *Config) Validate() error {
+	if c.pageSize == 0 {
+		return errors.New("pagesize must be nonzero")
+	}
+
+	if c.maxConcurrentRequests == 0 {
+		return errors.New("max requests must be nonzero")
+	}
+
+	return nil
 }
 
 func NewConfig() Config {

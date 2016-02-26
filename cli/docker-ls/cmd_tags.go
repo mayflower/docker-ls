@@ -34,7 +34,11 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 	}
 	r.repositoryName = args[0]
 
-	registryApi := lib.NewRegistryApi(libCfg)
+	registryApi, err := lib.NewRegistryApi(libCfg)
+	if err != nil {
+		return
+	}
+
 	var resp sortable
 
 	switch {

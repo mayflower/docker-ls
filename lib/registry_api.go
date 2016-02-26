@@ -63,12 +63,18 @@ func (r *registryApi) GetStatistics() connector.Statistics {
 	return r.connector.GetStatistics()
 }
 
-func NewRegistryApi(cfg Config) RegistryApi {
+func NewRegistryApi(cfg Config) (api RegistryApi, err error) {
+	err = cfg.Validate()
+	if err != nil {
+		return
+	}
+
 	registry := &registryApi{
 		cfg: cfg,
 	}
 
 	registry.connector = createConnector(&registry.cfg)
 
-	return registry
+	api = registry
+	return
 }

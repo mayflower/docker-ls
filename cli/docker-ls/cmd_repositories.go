@@ -31,7 +31,11 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 		os.Exit(1)
 	}
 
-	registryApi := lib.NewRegistryApi(libCfg)
+	registryApi, err := lib.NewRegistryApi(libCfg)
+	if err != nil {
+		return
+	}
+
 	var resp sortable
 
 	switch {
