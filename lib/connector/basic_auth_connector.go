@@ -50,7 +50,7 @@ func (r *basicAuthConnector) Request(method string, url *url.URL, hint string) (
 func NewBasicAuthConnector(cfg Config) Connector {
 	return &basicAuthConnector{
 		cfg:        cfg,
-		httpClient: http.DefaultClient,
+		httpClient: createHttpClient(cfg),
 		semaphore:  newSemaphore(cfg.MaxConcurrentRequests()),
 		stat:       new(statistics),
 	}

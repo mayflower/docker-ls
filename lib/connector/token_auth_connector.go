@@ -124,7 +124,7 @@ func (r *tokenAuthConnector) GetStatistics() Statistics {
 func NewTokenAuthConnector(cfg Config) Connector {
 	connector := tokenAuthConnector{
 		cfg:        cfg,
-		httpClient: http.DefaultClient,
+		httpClient: createHttpClient(cfg),
 		semaphore:  newSemaphore(cfg.MaxConcurrentRequests()),
 		tokenCache: newTokenCache(),
 		stat:       new(statistics),
