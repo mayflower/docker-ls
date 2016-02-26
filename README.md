@@ -24,7 +24,7 @@ Just download precompiled binaries for your platform from
 ## Go get
 
 Provided that you sport an installation of
-[golang](git@github.com:mayflower/docker-ls.git), the latest version from master
+[golang](https://golang.org), the latest version from master
 can be installed via
 
     go get -d github.com/mayflower/docker-ls/...
@@ -39,7 +39,7 @@ in the binaries.
 
 Clone the repository and do `make`. This will create a separate `GOPATH` in `build`
 and leave you with the binaries ready in `build/bin`. Of course, you need
-[golang](git@github.com:mayflower/docker-ls.git)
+[golang](https://golang.org)
 installed for this.
 
 # Usage
