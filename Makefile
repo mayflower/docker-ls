@@ -4,7 +4,7 @@ GO_TESTFLAGS = -cover -v
 
 GO_BUILDDIR = ./build
 GO_SRCDIRS = cli lib
-GO_PACKAGE_PREFIX = git.mayflower.de/vaillant-team/docker-ls
+GO_PACKAGE_PREFIX = github.com/mayflower/docker-ls
 GO_PACKAGES = \
 	cli/docker-ls \
 	cli/docker-ls/response \
@@ -14,7 +14,7 @@ GO_PACKAGES = \
 	lib/connector
 GO_DEPENDENCIES = gopkg.in/yaml.v2
 
-GO_DEBUG_MAIN = git.mayflower.de/vaillant-team/docker-ls/cli/docker-ls
+GO_DEBUG_MAIN = github.com/mayflower/docker-ls/cli/docker-ls
 GO_DEBUG_BINARY = ./docker-ls.debug
 
 GIT = git

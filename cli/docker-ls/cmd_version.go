@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"git.mayflower.de/vaillant-team/docker-ls/lib"
+	"github.com/mayflower/docker-ls/lib"
 )
 
 type versionCmd struct{}

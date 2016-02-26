@@ -3,7 +3,7 @@ package connector
 import (
 	"sync"
 
-	"git.mayflower.de/vaillant-team/docker-ls/lib/auth"
+	"github.com/mayflower/docker-ls/lib/auth"
 )
 
 type tokenCache struct {

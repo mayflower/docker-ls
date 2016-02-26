@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"git.mayflower.de/vaillant-team/docker-ls/lib/connector"
+	"github.com/mayflower/docker-ls/lib/connector"
 )
 
 const STATISTICS_TEMPLATE = `Statistics:

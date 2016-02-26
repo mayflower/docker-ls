@@ -4,7 +4,7 @@ import (
 	"sort"
 	"sync"
 
-	"git.mayflower.de/vaillant-team/docker-ls/lib"
+	"github.com/mayflower/docker-ls/lib"
 )
 
 type TagL0 string

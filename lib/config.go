@@ -5,7 +5,7 @@ import (
 	"flag"
 	"net/url"
 
-	"git.mayflower.de/vaillant-team/docker-ls/lib/auth"
+	"github.com/mayflower/docker-ls/lib/auth"
 )
 
 var DEFAULT_REGISTRY_URL url.URL

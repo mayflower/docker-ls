@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"git.mayflower.de/vaillant-team/docker-ls/lib"
+	"github.com/mayflower/docker-ls/lib"
 )
 
 const USAGE_TEMPLATE = `usage: docker-rm [options] <repository:reference>

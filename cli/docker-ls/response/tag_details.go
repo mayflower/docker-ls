@@ -1,7 +1,7 @@
 package response
 
 import (
-	"git.mayflower.de/vaillant-team/docker-ls/lib"
+	"github.com/mayflower/docker-ls/lib"
 )
 
 type LayerL0 string

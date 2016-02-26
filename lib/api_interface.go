@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"git.mayflower.de/vaillant-team/docker-ls/lib/connector"
+	"github.com/mayflower/docker-ls/lib/connector"
 )
 
 type Repository interface {

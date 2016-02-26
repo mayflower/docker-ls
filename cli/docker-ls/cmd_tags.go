@@ -5,8 +5,8 @@ import (
 	"os"
 	"sync"
 
-	"git.mayflower.de/vaillant-team/docker-ls/cli/docker-ls/response"
-	"git.mayflower.de/vaillant-team/docker-ls/lib"
+	"github.com/mayflower/docker-ls/cli/docker-ls/response"
+	"github.com/mayflower/docker-ls/lib"
 )
 
 type tagsCmd struct {
