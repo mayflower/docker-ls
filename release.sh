@@ -1,20 +1,27 @@
 #!/bin/bash
 
-os_list="linux darwin windows"
+os_list="linux darwin windows openbsd freebsd netbsd"
 
-arch_linux="386 amd64"
-arch_darwin="386 amd64"
+arch_linux="286 amd64 arm"
+arch_darwin="386 amd64 arm"
 arch_windows="386 amd64"
+arch_openbsd="386 amd64 arm"
+arch_freebsd="386 amd64 arm"
+arch_netbsd="386 amd64 arm"
 
 suffix_windows=".exe"
 
-package_prefix="git.mayflower.de/vaillant-team/docker-ls"
+package_prefix="github.com/mayflower/docker-ls"
 packages="cli/docker-ls cli/docker-rm"
 
 make install || exit 1
 export GOPATH="`pwd`/build"
 
 echo
+
+test -d release && rm -fr release
+mkdir release
+mkdir release/archives
 
 for os in $os_list; do
     arch_list="arch_$os"
@@ -30,7 +37,15 @@ for os in $os_list; do
         for package in $packages; do
             full_package="$package_prefix/$package"
             binary="$target_dir/${full_package##*/}$suffix"
-            CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -installsuffix no_cgo -o "$binary" "$full_package" || exit 1
+            CGO_ENABLED=0 GOOS="$os" GOARM=5 GOARCH="$arch" go build -installsuffix no_cgo -o "$binary" "$full_package" || exit 1
         done
+
+        echo archiving for $os $arch
+
+        zipfile="release/archives/docker-ls-${os}-${arch}.zip"
+        shafile="$zipfile.sha256"
+
+        zip --junk-paths "$zipfile" $target_dir/*
+        cat "$zipfile" | sha256sum | awk '{print $1;}' > "$shafile"
     done
 done
