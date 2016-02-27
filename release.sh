@@ -2,8 +2,8 @@
 
 os_list="linux darwin windows openbsd freebsd netbsd"
 
-arch_linux="286 amd64 arm"
-arch_darwin="386 amd64 arm"
+arch_linux="386 amd64 arm"
+arch_darwin="386 amd64"
 arch_windows="386 amd64"
 arch_openbsd="386 amd64 arm"
 arch_freebsd="386 amd64 arm"
