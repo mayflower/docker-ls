@@ -105,7 +105,7 @@ history as JSON.
 
 `docker-rm` can delete particular tags. Example:
 
-    docker-rm --registry https://my.registry.org --user someuser --password somepass busybox/sha256:51fef[...]
+    docker-rm --registry https://my.registry.org --user someuser --password somepass busybox:sha256:51fef[...]
 
 (the digest has been truncated for brevity). Please consult the command line help
 for a full list of all arguments.
