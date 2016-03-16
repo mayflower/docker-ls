@@ -114,9 +114,9 @@ Some remarks:
 
  * The tag *must* be specified as a sha256 content digest.
  * While tags can be deleted, the current registry implementation will (to the best
-   of my knowledge) not free the space associated with any resulting unused layers.
- * Deleting stuff is currently disabled by default in the official registry and needs to be explicitly
-   enabled &mdash; check out this [issue](https://github.com/mayflower/docker-ls/issues/1)
+   of my knowledge) not free the space associated with any resulting unused layers
+ * Deleting stuff is currently disabled by default in the official registry and needs to be
+   enabled explicitly &mdash; check out this [issue](https://github.com/mayflower/docker-ls/issues/1)
    for details.
  * **BE CAREFUL!** The API does not implement undelete :)
 
