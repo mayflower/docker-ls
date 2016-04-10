@@ -106,7 +106,7 @@ func version() string {
 	return fmt.Sprintf("%s (git:%s) (%s %s %s) (%s)",
 		STATIC_VERSION,
 		gitRev, runtime.Version(), runtime.GOOS, runtime.GOARCH,
-		now.Format(time.ANSIC),
+		now.Format(time.RFC1123),
 	)
 }
 
