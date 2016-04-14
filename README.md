@@ -101,6 +101,14 @@ history as JSON.
 
     docker-ls tag --registry https://my.registry.org --json --raw-manifest --parse-history stuff/busybox:latest
 
+### Notes considering the offical registry
+
+If no registry is specified, `docker-ls` will target the official registry server
+at `https://index.docker.io`. Please note that:
+
+ * The official registry does not support repository listing via `docker-ls repositories`
+ * Official repositories must be prefixed with `library/`, e.g. `docker-ls tags library/debian`
+
 ## docker-rm
 
 `docker-rm` can delete particular tags. Example:
