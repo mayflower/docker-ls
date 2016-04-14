@@ -27,12 +27,12 @@ func (r *tagListResponse) close() {
 }
 
 type tagListJsonResponse struct {
-	RespositoryName string   `json:"name"`
-	Tags            []string `json:"tags"`
+	RepositoryName string   `json:"name"`
+	Tags           []string `json:"tags"`
 }
 
 func (r *tagListJsonResponse) validate() error {
-	if r.RespositoryName == "" {
+	if r.RepositoryName == "" {
 		return genericMalformedResponseError
 	}
 
