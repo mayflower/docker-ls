@@ -6,7 +6,11 @@ import (
 )
 
 func (r *registryApi) DeleteTag(ref Refspec) (err error) {
-	response, err := r.connector.Delete(r.endpointUrl(fmt.Sprintf("/v2/%s/manifests/%s", ref.Repository(), ref.Reference())), "")
+	response, err := r.connector.Delete(
+		r.endpointUrl(fmt.Sprintf("/v2/%s/manifests/%s", ref.Repository(), ref.Reference())),
+		nil,
+		"",
+	)
 
 	if err != nil {
 		return

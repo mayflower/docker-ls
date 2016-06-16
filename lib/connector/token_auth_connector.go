@@ -18,15 +18,20 @@ type tokenAuthConnector struct {
 	stat          *statistics
 }
 
-func (r *tokenAuthConnector) Delete(url *url.URL, hint string) (*http.Response, error) {
-	return r.Request("DELETE", url, hint)
+func (r *tokenAuthConnector) Delete(url *url.URL, headers map[string]string, hint string) (*http.Response, error) {
+	return r.Request("DELETE", url, headers, hint)
 }
 
-func (r *tokenAuthConnector) Get(url *url.URL, hint string) (*http.Response, error) {
-	return r.Request("GET", url, hint)
+func (r *tokenAuthConnector) Get(url *url.URL, headers map[string]string, hint string) (*http.Response, error) {
+	return r.Request("GET", url, headers, hint)
 }
 
-func (r *tokenAuthConnector) Request(method string, url *url.URL, hint string) (response *http.Response, err error) {
+func (r *tokenAuthConnector) Request(
+	method string,
+	url *url.URL,
+	headers map[string]string,
+	hint string,
+) (response *http.Response, err error) {
 	r.semaphore.Lock()
 	defer r.semaphore.Unlock()
 
@@ -37,6 +42,10 @@ func (r *tokenAuthConnector) Request(method string, url *url.URL, hint string) (
 
 	if err != nil {
 		return
+	}
+
+	for header, value := range headers {
+		request.Header.Set(header, value)
 	}
 
 	if hint != "" {

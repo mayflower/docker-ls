@@ -6,8 +6,8 @@ import (
 )
 
 type Connector interface {
-	Request(method string, url *url.URL, hint string) (*http.Response, error)
-	Delete(url *url.URL, hint string) (*http.Response, error)
-	Get(url *url.URL, hint string) (*http.Response, error)
+	Request(method string, url *url.URL, headers map[string]string, hint string) (*http.Response, error)
+	Delete(url *url.URL, headers map[string]string, hint string) (*http.Response, error)
+	Get(url *url.URL, headers map[string]string, hint string) (*http.Response, error)
 	GetStatistics() Statistics
 }

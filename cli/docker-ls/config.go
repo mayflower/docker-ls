@@ -9,6 +9,7 @@ const (
 	OPTION_STATISTICS
 	OPTION_PROGRESS
 	OPTION_JSON_OUTPUT
+	OPTION_MANIFEST_VERSION
 )
 
 const (
@@ -17,10 +18,11 @@ const (
 )
 
 type Config struct {
-	recursionLevel uint
-	statistics     bool
-	progress       bool
-	jsonOutput     bool
+	recursionLevel  uint
+	manifestVersion uint
+	statistics      bool
+	progress        bool
+	jsonOutput      bool
 }
 
 func (c *Config) bindToFlags(flags *flag.FlagSet, options uint) {
@@ -39,13 +41,18 @@ func (c *Config) bindToFlags(flags *flag.FlagSet, options uint) {
 	if options&OPTION_JSON_OUTPUT != 0 {
 		flags.BoolVar(&c.jsonOutput, "json", c.jsonOutput, "output JSON instead of YAML")
 	}
+
+	if options&OPTION_MANIFEST_VERSION != 0 {
+		flags.UintVar(&c.manifestVersion, "manifest-version", c.manifestVersion, "manifest version to request")
+	}
 }
 
 func newConfig() *Config {
 	return &Config{
-		recursionLevel: 0,
-		statistics:     false,
-		progress:       true,
-		jsonOutput:     false,
+		recursionLevel:  0,
+		statistics:      false,
+		progress:        true,
+		jsonOutput:      false,
+		manifestVersion: 2,
 	}
 }

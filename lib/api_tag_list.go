@@ -87,6 +87,10 @@ func (r *tagListRequestContext) tokenCacheHint() string {
 	return cacheHintTagList(r.repositoryName)
 }
 
+func (r *tagListRequestContext) getHeaders() map[string]string {
+	return nil
+}
+
 func (r *registryApi) ListTags(repositoryName string) TagListResponse {
 	ctx := tagListRequestContext{
 		repositoryName: repositoryName,

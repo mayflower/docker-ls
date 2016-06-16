@@ -13,19 +13,24 @@ type basicAuthConnector struct {
 	stat       *statistics
 }
 
-func (r *basicAuthConnector) Delete(url *url.URL, hint string) (*http.Response, error) {
-	return r.Request("DELETE", url, hint)
+func (r *basicAuthConnector) Delete(url *url.URL, headers map[string]string, hint string) (*http.Response, error) {
+	return r.Request("DELETE", url, headers, hint)
 }
 
-func (r *basicAuthConnector) Get(url *url.URL, hint string) (*http.Response, error) {
-	return r.Request("GET", url, hint)
+func (r *basicAuthConnector) Get(url *url.URL, headers map[string]string, hint string) (*http.Response, error) {
+	return r.Request("GET", url, headers, hint)
 }
 
 func (r *basicAuthConnector) GetStatistics() Statistics {
 	return r.stat
 }
 
-func (r *basicAuthConnector) Request(method string, url *url.URL, hint string) (response *http.Response, err error) {
+func (r *basicAuthConnector) Request(
+	method string,
+	url *url.URL,
+	headers map[string]string,
+	hint string,
+) (response *http.Response, err error) {
 	r.semaphore.Lock()
 	defer r.semaphore.Unlock()
 
@@ -40,6 +45,10 @@ func (r *basicAuthConnector) Request(method string, url *url.URL, hint string) (
 	credentials := r.cfg.Credentials()
 	if credentials.Password() != "" || credentials.User() != "" {
 		request.SetBasicAuth(credentials.User(), credentials.Password())
+	}
+
+	for header, value := range headers {
+		request.Header.Set(header, value)
 	}
 
 	response, err = r.httpClient.Do(request)

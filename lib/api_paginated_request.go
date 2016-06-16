@@ -22,10 +22,11 @@ type paginatedRequestContext interface {
 	processPartialResponse(response paginatedRequestResponse, apiResponse interface{})
 	createResponse(api *registryApi) paginatedRequestResponse
 	createJsonResponse() validatable
+	getHeaders() map[string]string
 }
 
 func (r *registryApi) executePaginatedRequest(ctx paginatedRequestContext, url *url.URL, initialRequest bool) (response *http.Response, close bool, err error) {
-	response, err = r.connector.Get(url, ctx.tokenCacheHint())
+	response, err = r.connector.Get(url, ctx.getHeaders(), ctx.tokenCacheHint())
 
 	if err != nil {
 		return

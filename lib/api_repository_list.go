@@ -83,6 +83,10 @@ func (r *repositoryListRequestContext) tokenCacheHint() string {
 	return cacheHintRegistryList()
 }
 
+func (r *repositoryListRequestContext) getHeaders() map[string]string {
+	return nil
+}
+
 func (r *registryApi) ListRepositories() RepositoryListResponse {
 	return r.paginatedRequest(new(repositoryListRequestContext)).(*repositoryListResponse)
 }

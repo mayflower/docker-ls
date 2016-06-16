@@ -19,7 +19,7 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	libCfg.BindToFlags(r.flags)
 
 	cfg := newConfig()
-	cfg.bindToFlags(r.flags, OPTION_PROGRESS|OPTION_JSON_OUTPUT)
+	cfg.bindToFlags(r.flags, OPTION_PROGRESS|OPTION_JSON_OUTPUT|OPTION_MANIFEST_VERSION)
 
 	rawManifest := false
 	r.flags.BoolVar(&rawManifest, "raw-manifest", rawManifest, "output raw manifest")
@@ -52,7 +52,7 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 		return
 	}
 
-	tagDetails, err := registryApi.GetTagDetails(ref)
+	tagDetails, err := registryApi.GetTagDetails(ref, cfg.manifestVersion)
 
 	progress.Progress()
 	progress.Finish("done")

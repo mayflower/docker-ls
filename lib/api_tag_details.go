@@ -3,6 +3,7 @@ package lib
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,7 +16,8 @@ func (l layerDetails) ContentDigest() string {
 }
 
 type tagDetails struct {
-	manifest      *parsedManifest
+	name          string
+	tag           string
 	rawManifest   interface{}
 	contentDigest string
 	layers        []LayerDetails
@@ -30,11 +32,11 @@ func (t *tagDetails) ContentDigest() string {
 }
 
 func (t *tagDetails) RepositoryName() string {
-	return t.manifest.Name
+	return t.name
 }
 
 func (t *tagDetails) TagName() string {
-	return t.manifest.Tag
+	return t.tag
 }
 
 func (t *tagDetails) Layers() []LayerDetails {
@@ -45,14 +47,23 @@ func (t *tagDetails) setLayers(layers []parsedLayer) {
 	t.layers = make([]LayerDetails, 0, len(layers))
 
 	for _, layer := range layers {
-		t.layers = append(t.layers, layerDetails(layer.BlobSum))
+		t.layers = append(t.layers, layerDetails(layer.blobSum()))
 	}
 }
 
-func (r *registryApi) GetTagDetails(ref Refspec) (details TagDetails, err error) {
+func (r *registryApi) GetTagDetails(ref Refspec, manifestVersion uint) (details TagDetails, err error) {
 	url := r.endpointUrl(fmt.Sprintf("v2/%s/manifests/%s", ref.Repository(), ref.Reference()))
 
-	apiResponse, err := r.connector.Get(url, cacheHintTagDetails(ref.Repository()))
+	headers, err := r.getHeadersForManifestVersion(manifestVersion)
+	if err != nil {
+		return
+	}
+
+	apiResponse, err := r.connector.Get(
+		url,
+		headers,
+		cacheHintTagDetails(ref.Repository()),
+	)
 
 	if err != nil {
 		return
@@ -91,19 +102,37 @@ func (r *registryApi) GetTagDetails(ref Refspec) (details TagDetails, err error)
 		return
 	}
 
-	var manifest parsedManifest
-	err = json.Unmarshal(bodyBuffer.Bytes(), &manifest)
+	parsedManifest, err := parseManifest(bodyBuffer.Bytes())
 	if err != nil {
 		return
 	}
 
 	_details := &tagDetails{
-		manifest:      &manifest,
 		rawManifest:   rawManifest,
+		name:          ref.Repository(),
+		tag:           ref.Reference(),
 		contentDigest: apiResponse.Header.Get("docker-content-digest"),
 	}
-	_details.setLayers(manifest.Layers)
+
+	_details.setLayers(parsedManifest.layers())
 	details = _details
+
+	return
+}
+
+func (r *registryApi) getHeadersForManifestVersion(version uint) (headers map[string]string, err error) {
+	switch version {
+	case 1:
+		headers = nil
+
+	case 2:
+		headers = map[string]string{
+			"accept": "application/vnd.docker.distribution.manifest.v2+json",
+		}
+
+	default:
+		err = errors.New("invalid manifest version")
+	}
 
 	return
 }
