@@ -70,6 +70,7 @@ This list is not exhaustive; please consult the command line (`-h`) help for all
    [docker hub](https://hub.docker.com/).
  * `--user <user>` Username for authentication.
  * `--password <password>` Password for authentication.
+ * `--interactive-password` Read the password from an interactive prompt.
  * `--level <depth>` The `repositories` and `tags` subcommands support this option
    for recursive output. Depths 0 (default) and 1 are supported. Please note
    the recursing means more API requests and may be slow.
@@ -77,6 +78,13 @@ This list is not exhaustive; please consult the command line (`-h`) help for all
  * `--basic-auth` Use HTTP basic auth for authentication (instead of token authentication).
  * `--allow-insecure` Do not validate SSL certificates (useful for registries secured with a
     self-signed certificate).
+ * `--manifest-version` Request either manifest version
+   [V2.1](https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-1.md)
+   (`--manifest-version 1` or manifest version [V2.2](https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-2.md)
+   (`--manifest-version 2`, default) from the registry. Please note that deleting manifests
+   from registry version >= 2.3 will work **only** with content digests from a V2.2
+   manifest.
+
 
 ### Examples
 
@@ -126,6 +134,8 @@ Some remarks:
  * Deleting stuff is currently disabled by default in the official registry and needs to be
    enabled explicitly &mdash; check out this [issue](https://github.com/mayflower/docker-ls/issues/1)
    for details.
+ * Content digests obtained with `--manifest-version 1` will **not work** with
+   registry version >= 2.3.
  * **BE CAREFUL!** The API does not implement undelete :)
 
 # License
