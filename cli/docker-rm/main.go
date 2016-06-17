@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/mayflower/docker-ls/cli/util"
 	"github.com/mayflower/docker-ls/lib"
 )
 
@@ -39,7 +40,17 @@ func dispatch() (err error) {
 	showVersion := false
 	flags.BoolVar(&showVersion, "version", false, "show version and exit")
 
+	interactivePassword := false
+	flags.BoolVar(&interactivePassword, "interactive-password", false, "prompt for password")
+
 	flags.Parse(os.Args[1:])
+
+	if interactivePassword {
+		err = util.PromptPassword(&libCfg)
+		if err != nil {
+			return
+		}
+	}
 
 	if showVersion {
 		version()

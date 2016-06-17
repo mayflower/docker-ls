@@ -9,10 +9,11 @@ GO_PACKAGES = \
 	cli/docker-ls \
 	cli/docker-ls/response \
 	cli/docker-rm \
+	cli/util \
 	lib \
 	lib/auth \
 	lib/connector
-GO_DEPENDENCIES = gopkg.in/yaml.v2
+GO_DEPENDENCIES = gopkg.in/yaml.v2 golang.org/x/crypto/ssh/terminal
 
 GO_DEBUG_MAIN = github.com/mayflower/docker-ls/cli/docker-ls
 GO_DEBUG_BINARY = ./docker-ls.debug

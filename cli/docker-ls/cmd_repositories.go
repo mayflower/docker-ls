@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/mayflower/docker-ls/cli/docker-ls/response"
+	"github.com/mayflower/docker-ls/cli/util"
 	"github.com/mayflower/docker-ls/lib"
 )
 
@@ -19,11 +20,19 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 	libCfg.BindToFlags(r.flags)
 
 	r.cfg = newConfig()
-	r.cfg.bindToFlags(r.flags, OPTION_JSON_OUTPUT|OPTION_PROGRESS|OPTION_RECURSION_LEVEL|OPTION_STATISTICS)
+	r.cfg.bindToFlags(r.flags,
+		OPTION_JSON_OUTPUT|OPTION_PROGRESS|OPTION_RECURSION_LEVEL|OPTION_STATISTICS|OPTION_INTERACTIVE_PASSWORD)
 
 	err = r.flags.Parse(argv)
 	if err != nil {
 		return
+	}
+
+	if r.cfg.interactivePassword {
+		err = util.PromptPassword(&libCfg)
+		if err != nil {
+			return
+		}
 	}
 
 	if len(r.flags.Args()) != 0 {

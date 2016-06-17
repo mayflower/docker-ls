@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/mayflower/docker-ls/cli/docker-ls/response"
+	"github.com/mayflower/docker-ls/cli/util"
 	"github.com/mayflower/docker-ls/lib"
 )
 
@@ -19,7 +20,8 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	libCfg.BindToFlags(r.flags)
 
 	cfg := newConfig()
-	cfg.bindToFlags(r.flags, OPTION_PROGRESS|OPTION_JSON_OUTPUT|OPTION_MANIFEST_VERSION)
+	cfg.bindToFlags(r.flags,
+		OPTION_PROGRESS|OPTION_JSON_OUTPUT|OPTION_MANIFEST_VERSION|OPTION_INTERACTIVE_PASSWORD)
 
 	rawManifest := false
 	r.flags.BoolVar(&rawManifest, "raw-manifest", rawManifest, "output raw manifest")
@@ -30,6 +32,13 @@ func (r *tagDetailsCmd) execute(argv []string) (err error) {
 	err = r.flags.Parse(argv)
 	if err != nil {
 		return
+	}
+
+	if cfg.interactivePassword {
+		err = util.PromptPassword(&libCfg)
+		if err != nil {
+			return
+		}
 	}
 
 	args := r.flags.Args()

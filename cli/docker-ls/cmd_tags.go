@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/mayflower/docker-ls/cli/docker-ls/response"
+	"github.com/mayflower/docker-ls/cli/util"
 	"github.com/mayflower/docker-ls/lib"
 )
 
@@ -25,6 +26,13 @@ func (r *tagsCmd) execute(argv []string) (err error) {
 	err = r.flags.Parse(argv)
 	if err != nil {
 		return
+	}
+
+	if r.cfg.interactivePassword {
+		err = util.PromptPassword(&libCfg)
+		if err != nil {
+			return
+		}
 	}
 
 	args := r.flags.Args()

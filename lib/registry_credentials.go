@@ -22,6 +22,10 @@ func (r *RegistryCredentials) Password() string {
 	return r.password
 }
 
+func (r *RegistryCredentials) SetPassword(password string) {
+	r.password = password
+}
+
 func NewRegistryCredentials(user, password string) RegistryCredentials {
 	return RegistryCredentials{
 		user:     user,
