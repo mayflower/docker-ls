@@ -1,0 +1,10 @@
+language: go
+
+go:
+  - 1.6.2
+
+install: make
+script:
+  - make test
+
+sudo: false
