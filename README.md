@@ -14,12 +14,49 @@ are supported for authentication.
 
 # Installation
 
-Three ways there are to attain enlightenment.
+Four ways there are to attain enlightenment.
 
 ## Precompiled binaries
 
 Just download precompiled binaries for your platform from
 [github](https://github.com/mayflower/docker-ls/releases).
+
+## Docker
+
+If you have Docker installed, you may want to try this option. Clone the
+repository and do:
+
+    docker build -t docker-ls .
+
+Example of running container:
+
+    $ docker run -it docker-ls docker-ls tags library/consul
+    requesting list . done
+    repository: library/consul
+    tags:
+    - latest
+    - v0.6.4
+
+Or create aliases:
+
+    $ alias docker-ls='docker run -it docker-ls docker-ls'
+    $ alias docker-rm='docker run -it docker-ls docker-rm'
+
+So you can do:
+
+    $ docker-ls tags library/consul
+    requesting list . done
+    repository: library/consul
+    tags:
+    - latest
+    - v0.6.4
+
+and:
+
+    $ docker-rm | head -n 3
+    usage: docker-rm [options] <repository:reference>
+
+    Delete a tag in a given repository.
 
 ## Go get
 
