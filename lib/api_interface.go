@@ -1,6 +1,8 @@
 package lib
 
 import (
+	"net/url"
+
 	"github.com/mayflower/docker-ls/lib/connector"
 )
 
@@ -36,6 +38,7 @@ type TagDetails interface {
 }
 
 type RegistryApi interface {
+	GetRegistryUrl() *url.URL
 	ListRepositories() RepositoryListResponse
 	ListTags(repositoryName string) TagListResponse
 	GetTagDetails(ref Refspec, manifestVersion uint) (TagDetails, error)

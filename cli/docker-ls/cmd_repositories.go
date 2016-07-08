@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"sync"
 
@@ -71,7 +72,7 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 
 func (r *repositoriesCmd) listLevel0(api lib.RegistryApi) (resp *response.RepositoriesL0, err error) {
 	progress := NewProgressIndicator(r.cfg)
-	progress.Start("requesting list")
+	progress.Start(fmt.Sprintf("requesting list from %s", api.GetRegistryUrl()))
 
 	result := api.ListRepositories()
 	resp = response.NewRepositoriesL0()
@@ -90,7 +91,7 @@ func (r *repositoriesCmd) listLevel0(api lib.RegistryApi) (resp *response.Reposi
 
 func (r *repositoriesCmd) listLevel1(api lib.RegistryApi) (resp *response.RepositoriesL1, err error) {
 	progress := NewProgressIndicator(r.cfg)
-	progress.Start("requesting list")
+	progress.Start(fmt.Sprintf("requesting list from %s", api.GetRegistryUrl()))
 
 	repositoriesResult := api.ListRepositories()
 	resp = response.NewRepositoriesL1()
