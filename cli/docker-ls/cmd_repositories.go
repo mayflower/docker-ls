@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"sync"
+	"text/tabwriter"
 
 	"github.com/mayflower/docker-ls/cli/docker-ls/response"
 	"github.com/mayflower/docker-ls/cli/util"
@@ -21,7 +23,7 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 
 	r.cfg = newConfig()
 	r.cfg.bindToFlags(r.flags,
-		OPTION_JSON_OUTPUT|OPTION_PROGRESS|OPTION_RECURSION_LEVEL|OPTION_STATISTICS|OPTION_INTERACTIVE_PASSWORD)
+		OPTION_JSON_OUTPUT|OPTION_PROGRESS|OPTION_RECURSION_LEVEL|OPTION_STATISTICS|OPTION_INTERACTIVE_PASSWORD|OPTION_TABLE_OUTPUT)
 
 	err = r.flags.Parse(argv)
 	if err != nil {
@@ -60,7 +62,28 @@ func (r *repositoriesCmd) execute(argv []string) (err error) {
 	}
 
 	resp.Sort()
-	err = serializeToStdout(resp, r.cfg)
+
+	if r.cfg.tableOutput {
+		w := tabwriter.NewWriter(os.Stdout, 50, 1, 3, ' ', 0)
+		switch repositories := resp.(type) {
+		case *response.RepositoriesL0:
+			fmt.Fprintln(w, "REPOSITORY")
+			for _, repository := range repositories.Repositories {
+				fmt.Fprintf(w, "%s\n", repository)
+			}
+			w.Flush()
+		case *response.RepositoriesL1:
+			fmt.Fprintln(w, "REPOSITORY\tTAG")
+			for _, repository := range repositories.Repositories {
+				for _, tag := range repository.Tags {
+					fmt.Fprintf(w, "%s\t%s\n", repository.RepositoryName, tag)
+				}
+			}
+			w.Flush()
+		}
+	} else {
+		err = serializeToStdout(resp, r.cfg)
+	}
 
 	if r.cfg.statistics {
 		dumpStatistics(registryApi.GetStatistics())

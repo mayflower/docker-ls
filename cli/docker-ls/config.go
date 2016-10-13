@@ -11,6 +11,7 @@ const (
 	OPTION_JSON_OUTPUT
 	OPTION_MANIFEST_VERSION
 	OPTION_INTERACTIVE_PASSWORD
+	OPTION_TABLE_OUTPUT
 )
 
 const (
@@ -25,6 +26,7 @@ type Config struct {
 	progress            bool
 	jsonOutput          bool
 	interactivePassword bool
+	tableOutput         bool
 }
 
 func (c *Config) bindToFlags(flags *flag.FlagSet, options uint) {
@@ -51,6 +53,10 @@ func (c *Config) bindToFlags(flags *flag.FlagSet, options uint) {
 	if options&OPTION_INTERACTIVE_PASSWORD != 0 {
 		flags.BoolVar(&c.interactivePassword, "interactive-password", c.interactivePassword, "prompt for password")
 	}
+
+	if options&OPTION_TABLE_OUTPUT != 0 {
+		flags.BoolVar(&c.tableOutput, "table", c.tableOutput, "output table instead of YAML")
+	}
 }
 
 func newConfig() *Config {
@@ -61,5 +67,6 @@ func newConfig() *Config {
 		jsonOutput:          false,
 		manifestVersion:     2,
 		interactivePassword: false,
+		tableOutput:         false,
 	}
 }
