@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mayflower/docker-ls.svg?branch=master)](https://travis-ci.org/DirtyHairy/node-libxl)
+
 # What is it?
 
 Docker-ls is a set of CLI tools for browsing and manipulating docker registries.
