@@ -15,7 +15,7 @@ func createHttpClient(cfg Config) *http.Client {
 
 	return &http.Client{
 		Transport: &http.Transport{
-            Proxy: http.ProxyFromEnvironment,
+                Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: tlsConfig,
 		},
 	}
