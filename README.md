@@ -177,6 +177,13 @@ Some remarks:
    registry version >= 2.3.
  * **BE CAREFUL!** The API does not implement undelete :)
 
+## Using a proxy
+
+`docker-ls` supports HTTP / HTTPS proxies configured via the corresponding
+canonical environment variables. Check out the corresponding
+[documentation](https://golang.org/pkg/net/http/#ProxyFromEnvironment)
+for details.
+
 # License
 
 Docker-ls is distributed under the terms of the MIT license.
