@@ -4,14 +4,24 @@ import (
 	"errors"
 	"flag"
 	"net/url"
+	"os"
 
 	"github.com/mayflower/docker-ls/lib/auth"
 )
 
 var DEFAULT_REGISTRY_URL url.URL
+var DEFAULT_REGISTRY_URL_STRING string
 
 func init() {
-	parsed, _ := url.Parse("https://index.docker.io")
+	initRegistryURL()
+}
+
+func initRegistryURL() {
+	DEFAULT_REGISTRY_URL_STRING = os.Getenv("DOCKER_REGISTRY_URL")
+	if DEFAULT_REGISTRY_URL_STRING == "" {
+		DEFAULT_REGISTRY_URL_STRING = "https://index.docker.io"
+	}
+	parsed, _ := url.Parse(DEFAULT_REGISTRY_URL_STRING)
 
 	DEFAULT_REGISTRY_URL = *parsed
 }

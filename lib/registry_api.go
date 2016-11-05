@@ -13,6 +13,10 @@ type registryApi struct {
 	connector connector.Connector
 }
 
+func (r *registryApi) GetRegistryUrl() *url.URL {
+	return &r.cfg.registryUrl
+}
+
 func (r *registryApi) endpointUrl(path string) *url.URL {
 	url := r.cfg.registryUrl
 
