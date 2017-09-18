@@ -66,6 +66,10 @@ func (c *Config) AllowInsecure() bool {
 	return c.allowInsecure
 }
 
+func (c *Config) RegistryUrl() *url.URL {
+	return &c.registryUrl
+}
+
 func (c *Config) SetUrl(url url.URL) {
 	c.registryUrl = url
 }
@@ -78,12 +82,20 @@ func (c *Config) SetPagesize(pageSize uint) {
 	c.pageSize = pageSize
 }
 
+func (c *Config) PageSize() uint {
+	return c.pageSize
+}
+
 func (c *Config) SetMaxConcurrentRequests(maxRequests uint) {
 	c.maxConcurrentRequests = maxRequests
 }
 
 func (c *Config) SetUseBasicAuth(basicAuth bool) {
 	c.basicAuth = basicAuth
+}
+
+func (c *Config) UseBasicAuth() bool {
+	return c.basicAuth
 }
 
 func (c *Config) SetAllowInsecure(allowInsecure bool) {

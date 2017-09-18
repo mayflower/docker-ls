@@ -3,17 +3,19 @@ package main
 import (
 	"fmt"
 
-	"github.com/mayflower/docker-ls/lib"
+	"github.com/mayflower/go-repro/lib"
+	"github.com/spf13/cobra"
 )
 
-type versionCmd struct{}
-
-func (v versionCmd) execute(argv []string) error {
-	fmt.Printf("version: %s\n", lib.Version())
-
-	return nil
+var helpCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Show version",
+	Long:  "Show docker-ls version",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("version: %s\n", lib.Version())
+	},
 }
 
-func newVersionCmd() versionCmd {
-	return versionCmd{}
+func init() {
+	rootCmd.AddCommand(helpCmd)
 }

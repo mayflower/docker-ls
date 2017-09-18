@@ -18,6 +18,10 @@ func (r *RegistryCredentials) User() string {
 	return r.user
 }
 
+func (r *RegistryCredentials) SetUser(user string) {
+	r.user = user
+}
+
 func (r *RegistryCredentials) Password() string {
 	return r.password
 }
