@@ -20,41 +20,39 @@ type LibraryFlags struct {
 	AllowInsecure         bool
 }
 
-func (f *LibraryFlags) BindToFlags(flags *pflag.FlagSet) {
-	flags.StringVarP(&f.RegistryUrl, "registry", "r", defaultConfig.RegistryUrl().String(),
+func AddLibraryConfigToFlags(flags *pflag.FlagSet) {
+	flags.StringP("registry", "r", defaultConfig.RegistryUrl().String(),
 		"registry URL",
 	)
-	flags.UintVar(&f.Pagesize, "page-size", defaultConfig.PageSize(),
+	flags.Uint("page-size", defaultConfig.PageSize(),
 		"page size for paginated requests",
 	)
-	flags.UintVar(&f.MaxConcurrentRequests, "max-requests", defaultConfig.MaxConcurrentRequests(),
+	flags.Uint("max-requests", defaultConfig.MaxConcurrentRequests(),
 		"max. number of concurrent API requests",
 	)
-	flags.BoolVar(&f.BasicAuth, "basic-auth", defaultConfig.UseBasicAuth(),
+	flags.Bool("basic-auth", defaultConfig.UseBasicAuth(),
 		"use basic auth instead of token-based auth",
 	)
-	flags.StringVarP(&f.Username, "user", "u", defaultConfig.Credentials().User(),
+	flags.StringP("user", "u", defaultConfig.Credentials().User(),
 		"username for registry login",
 	)
-	flags.StringVarP(&f.Password, "password", "p", defaultConfig.Credentials().Password(),
+	flags.StringP("password", "p", defaultConfig.Credentials().Password(),
 		"password for registry login",
 	)
-	flags.BoolVar(&f.AllowInsecure, "allow-insecure", defaultConfig.AllowInsecure(),
+	flags.Bool("allow-insecure", defaultConfig.AllowInsecure(),
 		"ignore SSL certificate validation errors",
 	)
-
-	viper.BindPFlags(flags)
 }
 
-func (f *LibraryFlags) CreateLibraryConfig() (config *lib.Config, err error) {
+func LibraryConfigFromViper() (config *lib.Config, err error) {
 	c := lib.NewConfig()
 
-	var url *url.URL
-	if url, err = url.Parse(viper.GetString("registry")); err != nil {
+	var parsedUrl *url.URL
+	if parsedUrl, err = url.Parse(viper.GetString("registry")); err != nil {
 		return
 	}
 
-	c.SetUrl(*url)
+	c.SetUrl(*parsedUrl)
 	c.SetPagesize(uint(viper.GetInt("page-size")))
 	c.SetMaxConcurrentRequests(uint(viper.GetInt("max-requests")))
 	c.SetUseBasicAuth(viper.GetBool("basic-auth"))

@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mayflower/docker-ls/cli/util"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -17,14 +16,9 @@ var rootCmd = &cobra.Command{
 	Long:  "Browse and examine repositories and tags in a docker registry",
 }
 
-var libraryFlags = &util.LibraryFlags{}
-
 func init() {
-	flags := rootCmd.PersistentFlags()
-	libraryFlags.BindToFlags(flags)
-
 	var configFile string
-	flags.StringVarP(&configFile, "config", "c", "",
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "",
 		"read config from specified file (default: look for config in home directory)",
 	)
 

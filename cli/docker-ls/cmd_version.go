@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/mayflower/go-repro/lib"
+	"github.com/mayflower/docker-ls/lib"
 	"github.com/spf13/cobra"
 )
 
