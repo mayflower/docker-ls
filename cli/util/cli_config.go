@@ -34,7 +34,7 @@ func AddCliConfigToFlags(flags *pflag.FlagSet, options uint) {
 	c := NewCliConfig()
 
 	if options&CLI_OPTION_RECURSION_LEVEL != 0 {
-		flags.UintP("recursion", "l", c.RecursionLevel, "level of recursion")
+		flags.UintP("level", "l", c.RecursionLevel, "level of recursion")
 	}
 
 	if options&CLI_OPTION_STATISTICS != 0 {

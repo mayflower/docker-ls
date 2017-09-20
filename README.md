@@ -16,7 +16,7 @@ are supported for authentication.
 
 # Installation
 
-Four ways there are to attain enlightenment.
+Three ways there are to attain enlightenment.
 
 ## Precompiled binaries
 
@@ -74,13 +74,6 @@ Isn't a simple `go get github.com/mayflower/docker-ls/cli/...` sufficient, you a
 Indeed it is, but including the generate step detailed above will encode verbose version information
 in the binaries.
 
-## Git & Make
-
-Clone the repository and do `make`. This will create a separate `GOPATH` in `build`
-and leave you with the binaries ready in `build/bin`. Of course, you need
-[golang](https://golang.org)
-installed for this.
-
 # Usage
 
 Docker-ls contains two CLI tools: `docker-ls` and `docker-rm` .
@@ -90,7 +83,7 @@ Docker-ls contains two CLI tools: `docker-ls` and `docker-rm` .
 `docker-ls` is a browser for docker registries. Output is either encoded as YAML or
 as JSON.
 
-Three subcommands are available
+Several subcommands are available
 
  * `docker-ls repositories` Obtains a list of repositories on the server.
    **This is not supported by the official [docker hub](https://hub.docker.com/).**
@@ -104,16 +97,16 @@ Three subcommands are available
 
 This list is not exhaustive; please consult the command line (`-h`) help for all options.
 
- * `--registry <url>` Connect to the registry at <url>. The URL must include the protocol
+ * `--registry <url> (-r)` Connect to the registry at <url>. The URL must include the protocol
    (http / https). By default, `docker-ls` targets the official
    [docker hub](https://hub.docker.com/).
- * `--user <user>` Username for authentication.
- * `--password <password>` Password for authentication.
- * `--interactive-password` Read the password from an interactive prompt.
- * `--level <depth>` The `repositories` and `tags` subcommands support this option
+ * `--user <user> (-u)` Username for authentication.
+ * `--password <password> (-p)` Password for authentication.
+ * `--interactive-password (-i)` Read the password from an interactive prompt.
+ * `--level <depth> (-l)` The `repositories` and `tags` subcommands support this option
    for recursive output. Depths 0 (default) and 1 are supported. Please note
    the recursing means more API requests and may be slow.
- * `--json` Switch output format from YAML to JSON.
+ * `--json (-j)` Switch output format from YAML to JSON.
  * `--basic-auth` Use HTTP basic auth for authentication (instead of token authentication).
  * `--allow-insecure` Do not validate SSL certificates (useful for registries secured with a
     self-signed certificate).
@@ -123,7 +116,6 @@ This list is not exhaustive; please consult the command line (`-h`) help for all
    (`--manifest-version 2`, default) from the registry. Please note that deleting manifests
    from registry version >= 2.3 will work **only** with content digests from a V2.2
    manifest.
-
 
 ### Examples
 
@@ -183,6 +175,44 @@ Some remarks:
 canonical environment variables. Check out the corresponding
 [documentation](https://golang.org/pkg/net/http/#ProxyFromEnvironment)
 for details.
+
+## Configuration via config files and environment variables
+
+All options that can be specified via CLI flags can be read from a config file or from an
+environment variables. The priority is CLI flag > environment variable > config file.
+
+### Config files
+
+By default, both tools try to read
+`~/.docker-ls.[yaml|json|toml|...]`
+(please check the Viper [documentation](https://github.com/spf13/viper)
+for a full list of the supported formats). The names of the keys in the file
+are the long names of the CLI flags. For example, the following YAML file would configure
+registry URL and username
+
+    registry: https://foo.bar.com
+    user: foo
+
+Other config files can be specified via the `--config` option.
+
+### Environment variables
+
+In addition to config files and CLI flags, environment variables can be used to specify options
+globally. The name is determined by taking the long CLI name, uppercasing replacing
+hyphens "-" with underscores "\_" and prefixing the result with "DOCKER_LS_". For example,
+the following would enable interactive password prompts for all consecutive
+invocations:
+
+    export DOCKER_LS_INTERACTIVE_PASSWORD=1
+
+## Shell autocompletion
+
+Both `docker-ls` and `docker-rm` support shell autocompletion for subcommands and
+options. To enable this, source the output of `docker-ls autocomplete bash|zsh`
+and `docker-rm autocomplete bash|zsh` in the running shell. In case of bash, this can be
+achieved with
+
+    $ source <(docker-ls autocomplete bash)
 
 # License
 
