@@ -14,9 +14,6 @@ suffix_windows=".exe"
 package_prefix="github.com/mayflower/docker-ls"
 packages="cli/docker-ls cli/docker-rm"
 
-make install || exit 1
-export GOPATH="`pwd`/build"
-
 echo
 
 test -d release && rm -fr release
@@ -37,7 +34,7 @@ for os in $os_list; do
         for package in $packages; do
             full_package="$package_prefix/$package"
             binary="$target_dir/${full_package##*/}$suffix"
-            CGO_ENABLED=0 GOOS="$os" GOARM=5 GOARCH="$arch" go build -installsuffix no_cgo -o "$binary" "$full_package" || exit 1
+            CGO_ENABLED=0 GOOS="$os" GOARM=5 GOARCH="$arch" go build -o "$binary" "$full_package" || exit 1
         done
 
         echo archiving for $os $arch
