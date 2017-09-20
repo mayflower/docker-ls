@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var tagsCommand = &cobra.Command{
-	Use:   "tags",
+var tagsCmd = &cobra.Command{
+	Use:   "tags <repository>",
 	Short: "List tags",
 	Long:  "List all tags for a repository",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -40,9 +40,9 @@ var tagsCommand = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(tagsCommand)
+	rootCmd.AddCommand(tagsCmd)
 
-	flags := tagsCommand.Flags()
+	flags := tagsCmd.Flags()
 
 	util.AddCliConfigToFlags(flags, util.CLI_OPTIONS_FULL)
 	util.AddLibraryConfigToFlags(flags)

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var helpCmd = &cobra.Command{
+var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show version",
 	Long:  "Show docker-ls version",
@@ -17,5 +17,5 @@ var helpCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(helpCmd)
+	rootCmd.AddCommand(versionCmd)
 }
