@@ -16,6 +16,9 @@ packages="cli/docker-ls cli/docker-rm"
 
 echo
 
+go test github.com/mayflower/docker-ls/lib/... || exit 1
+go generate github.com/mayflower/docker-ls/lib/... || exit 1
+
 test -d release && rm -fr release
 mkdir release
 mkdir release/archives
@@ -43,6 +46,6 @@ for os in $os_list; do
         shafile="$zipfile.sha256"
 
         zip --junk-paths "$zipfile" $target_dir/*
-        cat "$zipfile" | sha256sum | awk '{print $1;}' > "$shafile"
+        cat "$zipfile" | shasum -a 256 | awk '{print $1;}' > "$shafile"
     done
 done
