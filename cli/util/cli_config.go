@@ -64,7 +64,7 @@ func AddCliConfigToFlags(flags *pflag.FlagSet, options uint) {
 
 func CliConfigFromViper() *CliConfig {
 	return &CliConfig{
-		RecursionLevel:      uint(viper.GetInt("recursion")),
+		RecursionLevel:      uint(viper.GetInt("level")),
 		Statistics:          viper.GetBool("statistics"),
 		Progress:            viper.GetBool("progress-indicator"),
 		JsonOutput:          viper.GetBool("json"),

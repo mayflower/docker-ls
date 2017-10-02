@@ -15,3 +15,7 @@ Initial release
   * Most options now have shorthands.
   * Support for configuration via environment and config file.
   * Move to dep for dependency management, commit vendored dependencies
+
+## 0.3.1
+
+  * Fix recursion in `docker-ls repositories`and `docker-ls tags`
