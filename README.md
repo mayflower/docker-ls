@@ -23,6 +23,12 @@ Three ways there are to attain enlightenment.
 Just download precompiled binaries for your platform from
 [github](https://github.com/mayflower/docker-ls/releases).
 
+## MacOS / Homebrew
+
+You can install `docker-ls` directly from homebrew:
+
+    brew install docker-ls
+
 ## Docker
 
 If you have Docker installed, you may want to try this option. Clone the
