@@ -16,7 +16,7 @@ are supported for authentication.
 
 # Installation
 
-Five ways there are to attain enlightenment.
+Six ways there are to attain enlightenment.
 
 ## Precompiled binaries
 
