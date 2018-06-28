@@ -29,13 +29,13 @@ You can install `docker-ls` directly from homebrew:
 
     brew install docker-ls
 
-## [Gentoo](https://gentoo.org) / [portage](https://wiki.gentoo.org/wiki/Portage)
+## Gentoo / portage
 
 ```
 emerge docker-ls
 ```
 
-## [NixOS](https://nixos.org)
+## NixOS
 
 ```
 nix-env -iA nixos.docker-ls
