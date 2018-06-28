@@ -16,7 +16,7 @@ are supported for authentication.
 
 # Installation
 
-Three ways there are to attain enlightenment.
+Five ways there are to attain enlightenment.
 
 ## Precompiled binaries
 
@@ -28,6 +28,18 @@ Just download precompiled binaries for your platform from
 You can install `docker-ls` directly from homebrew:
 
     brew install docker-ls
+
+## [Gentoo](https://gentoo.org) / [portage](https://wiki.gentoo.org/wiki/Portage)
+
+```
+emerge docker-ls
+```
+
+## [NixOS](https://nixos.org)
+
+```
+nix-env -iA nixos.docker-ls
+```
 
 ## Docker
 
