@@ -13,7 +13,7 @@ import (
 
 var repositoriesCmd = &cobra.Command{
 	Use:   "repositories",
-	Short: "List repostiories",
+	Short: "List repositories",
 	Long:  "List all repositories",
 	Run: func(cmd *cobra.Command, args []string) {
 		viper.BindPFlags(cmd.Flags())
