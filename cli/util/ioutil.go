@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"text/template"
 
 	"gopkg.in/yaml.v2"
 )
@@ -35,24 +36,33 @@ func JsonToStdout(data interface{}) (err error) {
 }
 
 func SerializeToStdout(data interface{}, cfg *CliConfig) error {
-	if cfg.JsonOutput {
+	if cfg.TemplateSource != "" {
+		return templateSourceToStdout(data, cfg)
+	} else if cfg.Template != "" {
+		return namedTemplateToStdout(data, cfg)
+	} else if cfg.JsonOutput {
 		return JsonToStdout(data)
 	} else {
 		return YamlToStdout(data)
 	}
 }
 
-func TemplateToStdout(data interface{}, name string) (err error) {
-	var templateRepository TemplateRepository
-
-	templateRepository, err = TemplateRepositoryFromConfig()
-	if err != nil {
+func namedTemplateToStdout(data interface{}, cfg *CliConfig) (err error) {
+	template := cfg.templateRepository.Get(cfg.Template)
+	if template == nil {
+		err = errors.New(fmt.Sprintf("no template with name '%s'", cfg.Template))
 		return
 	}
 
-	template := templateRepository.Get(name)
-	if template == nil {
-		err = errors.New(fmt.Sprintf("no template with name '%s'", name))
+	err = template.Execute(os.Stdout, data)
+	return
+}
+
+func templateSourceToStdout(data interface{}, cfg *CliConfig) (err error) {
+	template := template.New("inline")
+
+	_, err = template.Parse(cfg.TemplateSource)
+	if err != nil {
 		return
 	}
 

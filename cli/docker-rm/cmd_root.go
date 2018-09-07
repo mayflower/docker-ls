@@ -18,10 +18,18 @@ var rootCmd = &cobra.Command{
 		viper.BindPFlags(cmd.Flags())
 
 		var err error
+
 		var libraryConfig *lib.Config
-		if libraryConfig, err = util.LibraryConfigFromViper(); err == nil {
+		libraryConfig, err = util.LibraryConfigFromViper()
+
+		var cliConfig *util.CliConfig
+		if err == nil {
+			cliConfig, err = util.CliConfigFromViper()
+		}
+
+		if err == nil {
 			executor := Executor{
-				CliConfig:     util.CliConfigFromViper(),
+				CliConfig:     cliConfig,
 				LibraryConfig: libraryConfig,
 				Tag:           args[0],
 			}

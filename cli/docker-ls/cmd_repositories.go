@@ -23,9 +23,14 @@ var repositoriesCmd = &cobra.Command{
 		var libraryConfig *lib.Config
 		libraryConfig, err = util.LibraryConfigFromViper()
 
+		var cliConfig *util.CliConfig
+		if err == nil {
+			cliConfig, err = util.CliConfigFromViper()
+		}
+
 		if err == nil {
 			executor := repositories.Executor{
-				CliConfig:     util.CliConfigFromViper(),
+				CliConfig:     cliConfig,
 				LibraryConfig: libraryConfig,
 			}
 
@@ -48,11 +53,6 @@ func init() {
 	util.AddLibraryConfigToFlags(flags)
 	util.AddCliConfigToFlags(
 		flags,
-		util.CLI_OPTION_JSON_OUTPUT|
-			util.CLI_OPTION_PROGRESS|
-			util.CLI_OPTION_RECURSION_LEVEL|
-			util.CLI_OPTION_STATISTICS|
-			util.CLI_OPTION_INTERACTIVE_PASSWORD|
-			util.CLI_OPTION_TABLE_OUTPUT,
+		util.CLI_OPTIONS_FULL & ^util.CLI_OPTION_MANIFEST_VERSION,
 	)
 }

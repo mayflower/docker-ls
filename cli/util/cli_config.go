@@ -14,6 +14,7 @@ const (
 	CLI_OPTION_INTERACTIVE_PASSWORD
 	CLI_OPTION_TABLE_OUTPUT
 	CLI_OPTION_TEMPLATE
+	CLI_OPTION_TEMPLATE_SOURCE
 )
 
 const (
@@ -30,6 +31,8 @@ type CliConfig struct {
 	InteractivePassword bool
 	TableOutput         bool
 	Template            string
+	TemplateSource      string
+	templateRepository  TemplateRepository
 }
 
 func AddCliConfigToFlags(flags *pflag.FlagSet, options uint) {
@@ -64,12 +67,16 @@ func AddCliConfigToFlags(flags *pflag.FlagSet, options uint) {
 	}
 
 	if options&CLI_OPTION_TEMPLATE != 0 {
-		flags.StringP("template", "t", c.Template, "use template for output")
+		flags.StringP("template", "t", c.Template, "use named template from config for output")
+	}
+
+	if options&CLI_OPTION_TEMPLATE_SOURCE != 0 {
+		flags.String("template-source", c.TemplateSource, "use template for output")
 	}
 }
 
-func CliConfigFromViper() *CliConfig {
-	return &CliConfig{
+func CliConfigFromViper() (cfg *CliConfig, err error) {
+	cfg = &CliConfig{
 		RecursionLevel:      uint(viper.GetInt("level")),
 		Statistics:          viper.GetBool("statistics"),
 		Progress:            viper.GetBool("progress-indicator"),
@@ -78,17 +85,17 @@ func CliConfigFromViper() *CliConfig {
 		InteractivePassword: viper.GetBool("interactive-password"),
 		TableOutput:         viper.GetBool("table"),
 		Template:            viper.GetString("template"),
+		TemplateSource:      viper.GetString("template-source"),
 	}
+
+	cfg.templateRepository, err = TemplateRepositoryFromConfig()
+
+	return
 }
 
 func NewCliConfig() *CliConfig {
 	return &CliConfig{
-		RecursionLevel:      0,
-		Statistics:          false,
-		Progress:            true,
-		JsonOutput:          false,
-		ManifestVersion:     2,
-		InteractivePassword: false,
-		TableOutput:         false,
+		Progress:        true,
+		ManifestVersion: 2,
 	}
 }

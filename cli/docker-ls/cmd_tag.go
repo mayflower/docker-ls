@@ -19,10 +19,18 @@ var tagCmd = &cobra.Command{
 		viper.BindPFlags(cmd.Flags())
 
 		var err error
+
 		var libraryConfig *lib.Config
-		if libraryConfig, err = util.LibraryConfigFromViper(); err == nil {
+		libraryConfig, err = util.LibraryConfigFromViper()
+
+		var cliConfig *util.CliConfig
+		if err == nil {
+			cliConfig, err = util.CliConfigFromViper()
+		}
+
+		if err == nil {
 			executor := tag.Executor{
-				CliConfig:     util.CliConfigFromViper(),
+				CliConfig:     cliConfig,
 				LibraryConfig: libraryConfig,
 				Tag:           args[0],
 				RawManifest:   viper.GetBool("raw-manifest"),
@@ -49,6 +57,8 @@ func init() {
 		flags,
 		util.CLI_OPTION_PROGRESS|
 			util.CLI_OPTION_JSON_OUTPUT|
+			util.CLI_OPTION_TEMPLATE|
+			util.CLI_OPTION_TEMPLATE_SOURCE|
 			util.CLI_OPTION_MANIFEST_VERSION|
 			util.CLI_OPTION_INTERACTIVE_PASSWORD,
 	)

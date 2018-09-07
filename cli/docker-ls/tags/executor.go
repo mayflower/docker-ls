@@ -43,11 +43,7 @@ func (e *Executor) Execute() (err error) {
 
 	resp.Sort()
 
-	if e.CliConfig.Template != "" {
-		err = util.TemplateToStdout(resp, e.CliConfig.Template)
-	} else {
-		err = util.SerializeToStdout(resp, e.CliConfig)
-	}
+	err = util.SerializeToStdout(resp, e.CliConfig)
 
 	if e.CliConfig.Statistics {
 		util.DumpStatistics(registryApi.GetStatistics())

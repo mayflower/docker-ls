@@ -7,10 +7,10 @@ import (
 type LayerL0 string
 
 type TagDetailsL0 struct {
-	RepositoryName string    `yaml:"repository,omitempty",json:"repository,omitempty"`
-	TagName        string    `yaml:"tagName",json:"tagName"`
-	ContentDigest  string    `yaml:"digest",json:"digest"`
-	Layers         []LayerL0 `yaml:"layers",json:"layers"`
+	Repository string    `yaml:"repository,omitempty" json:"repository,omitempty"`
+	TagName    string    `yaml:"tagName" json:"tagName"`
+	Digest     string    `yaml:"digest" json:"digest"`
+	Layers     []LayerL0 `yaml:"layers" json:"layers"`
 }
 
 func NewTagDetailsL0(tag lib.TagDetails, includeRepository bool) *TagDetailsL0 {
@@ -20,13 +20,13 @@ func NewTagDetailsL0(tag lib.TagDetails, includeRepository bool) *TagDetailsL0 {
 	}
 
 	tagDetails := TagDetailsL0{
-		TagName:       tag.TagName(),
-		ContentDigest: tag.ContentDigest(),
-		Layers:        layers,
+		TagName: tag.TagName(),
+		Digest:  tag.ContentDigest(),
+		Layers:  layers,
 	}
 
 	if includeRepository {
-		tagDetails.RepositoryName = tag.RepositoryName()
+		tagDetails.Repository = tag.RepositoryName()
 	}
 
 	return &tagDetails
