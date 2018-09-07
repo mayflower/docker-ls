@@ -3,6 +3,7 @@ package util
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -39,4 +40,22 @@ func SerializeToStdout(data interface{}, cfg *CliConfig) error {
 	} else {
 		return YamlToStdout(data)
 	}
+}
+
+func TemplateToStdout(data interface{}, name string) (err error) {
+	var templateRepository TemplateRepository
+
+	templateRepository, err = TemplateRepositoryFromConfig()
+	if err != nil {
+		return
+	}
+
+	template := templateRepository.Get(name)
+	if template == nil {
+		err = errors.New(fmt.Sprintf("no template with name '%s'", name))
+		return
+	}
+
+	err = template.Execute(os.Stdout, data)
+	return
 }

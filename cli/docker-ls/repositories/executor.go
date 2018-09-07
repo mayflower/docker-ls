@@ -58,7 +58,7 @@ func (e *Executor) Execute() (err error) {
 			fmt.Fprintln(w, "REPOSITORY\tTAG")
 			for _, repository := range repositories.Repositories {
 				for _, tag := range repository.Tags {
-					fmt.Fprintf(w, "%s\t%s\n", repository.RepositoryName, tag)
+					fmt.Fprintf(w, "%s\t%s\n", repository.Repository, tag)
 				}
 			}
 			w.Flush()

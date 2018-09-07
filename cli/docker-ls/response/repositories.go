@@ -55,7 +55,7 @@ func (r RepositoryCollectionL1) Len() int {
 }
 
 func (r RepositoryCollectionL1) Less(i, j int) bool {
-	return string(r[i].RepositoryName) < string(r[j].RepositoryName)
+	return string(r[i].Repository) < string(r[j].Repository)
 }
 
 func (r RepositoryCollectionL1) Swap(i, j int) {

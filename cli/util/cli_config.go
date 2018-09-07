@@ -13,10 +13,11 @@ const (
 	CLI_OPTION_MANIFEST_VERSION
 	CLI_OPTION_INTERACTIVE_PASSWORD
 	CLI_OPTION_TABLE_OUTPUT
+	CLI_OPTION_TEMPLATE
 )
 
 const (
-	CLI_OPTIONS_FULL = 0xFFFF
+	CLI_OPTIONS_FULL = 0xFFFFFFFF
 	CLI_OPTIONS_NONE = 0
 )
 
@@ -28,6 +29,7 @@ type CliConfig struct {
 	JsonOutput          bool
 	InteractivePassword bool
 	TableOutput         bool
+	Template            string
 }
 
 func AddCliConfigToFlags(flags *pflag.FlagSet, options uint) {
@@ -60,6 +62,10 @@ func AddCliConfigToFlags(flags *pflag.FlagSet, options uint) {
 	if options&CLI_OPTION_TABLE_OUTPUT != 0 {
 		flags.Bool("table", c.TableOutput, "output table instead of YAML")
 	}
+
+	if options&CLI_OPTION_TEMPLATE != 0 {
+		flags.StringP("template", "t", c.Template, "use template for output")
+	}
 }
 
 func CliConfigFromViper() *CliConfig {
@@ -71,6 +77,7 @@ func CliConfigFromViper() *CliConfig {
 		ManifestVersion:     uint(viper.GetInt("manifest-version")),
 		InteractivePassword: viper.GetBool("interactive-password"),
 		TableOutput:         viper.GetBool("table"),
+		Template:            viper.GetString("template"),
 	}
 }
 

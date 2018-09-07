@@ -26,9 +26,9 @@ func (t TagCollectionL0) Swap(i, j int) {
 }
 
 type TagsL0 struct {
-	RepositoryName string  `yaml:"repository",json:"repository"`
-	Tags           []TagL0 `yaml:"tags",json:"tags"`
-	mutex          sync.Mutex
+	Repository string  `yaml:"repository" json:"repository"`
+	Tags       []TagL0 `yaml:"tags" json:"tags"`
+	mutex      sync.Mutex
 }
 
 func (t *TagsL0) AddTag(tag lib.Tag) {
@@ -45,7 +45,7 @@ func (t *TagsL0) Sort() {
 
 func NewTagsL0(repositoryName string) *TagsL0 {
 	return &TagsL0{
-		RepositoryName: repositoryName,
+		Repository: repositoryName,
 	}
 }
 
@@ -68,9 +68,9 @@ func (t TagCollectionL1) Swap(i, j int) {
 }
 
 type TagsL1 struct {
-	RepositoryName string `yaml:"repository",json:"repository"`
-	Tags           []TagL1
-	mutex          sync.Mutex
+	Repository string `yaml:"repository" json:"repository"`
+	Tags       []TagL1
+	mutex      sync.Mutex
 }
 
 func (t *TagsL1) AddTag(tag lib.TagDetails) {
@@ -87,6 +87,6 @@ func (t *TagsL1) Sort() {
 
 func NewTagsL1(repositoryName string) *TagsL1 {
 	return &TagsL1{
-		RepositoryName: repositoryName,
+		Repository: repositoryName,
 	}
 }

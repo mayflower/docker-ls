@@ -21,6 +21,7 @@ var tagsCmd = &cobra.Command{
 
 		var err error
 		var libraryConfig *lib.Config
+
 		if libraryConfig, err = util.LibraryConfigFromViper(); err == nil {
 			executor := tags.Executor{
 				CliConfig:     util.CliConfigFromViper(),
@@ -44,6 +45,6 @@ func init() {
 
 	flags := tagsCmd.Flags()
 
-	util.AddCliConfigToFlags(flags, util.CLI_OPTIONS_FULL)
+	util.AddCliConfigToFlags(flags, util.CLI_OPTIONS_FULL & ^util.CLI_OPTION_TABLE_OUTPUT)
 	util.AddLibraryConfigToFlags(flags)
 }
