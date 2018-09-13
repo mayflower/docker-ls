@@ -41,6 +41,11 @@ emerge docker-ls
 nix-env -iA nixos.docker-ls
 ```
 
+## Arch Linux
+
+Package in the [AUR](https://aur.archlinux.org/packages/docker-ls/) available.
+
+
 ## Docker
 
 If you have Docker installed, you may want to try this option. Clone the
