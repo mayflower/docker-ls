@@ -130,6 +130,8 @@ This list is not exhaustive; please consult the command line (`-h`) help for all
    for recursive output. Depths 0 (default) and 1 are supported. Please note
    the recursing means more API requests and may be slow.
  * `--json (-j)` Switch output format from YAML to JSON.
+ * `--template (-t)` Use a named golang template from the configuration for output (see below)
+ * `--template-source` Use the specified template for output (see below)
  * `--basic-auth` Use HTTP basic auth for authentication (instead of token authentication).
  * `--allow-insecure` Do not validate SSL certificates (useful for registries secured with a
     self-signed certificate).
@@ -217,6 +219,56 @@ registry URL and username
     user: foo
 
 Other config files can be specified via the `--config` option.
+
+### Template Output
+
+Output of the various `docker-ls` subcommands can be further customized by using
+[golang templates](https://golang.org/pkg/text/template/).
+
+#### Predefined templates
+
+Named templates can be configured in the `templates` section of the configuration file.
+When `docker-ls` is invoked, the `-t` parameter (see above) can be used to select a named
+template for formatting the output.
+
+**Example:** The following YAML section defines a template that outputs the list of tags
+in a repository as a simple HTML document.
+
+```
+templates:
+  taglist_html: |
+    <head></head>
+    <body>
+        <h1>Tags for repository {{ html .Repository }}</h1>
+        <ul>
+            {{- range .Tags }}
+            <li>{{ html . }}</li>
+            {{- end }}
+        </ul>
+    </body>
+```
+
+It can be invoked by running i.e.
+
+```
+docker-ls tags -t taglist_html /library/debian
+```
+
+#### Inline templates
+
+Simple templates can also be passed directly on the command line using the `--template-source`
+parameter:
+
+```
+docker-ls tag --template-source '{{ .TagName }}: {{ .Digest }}'  /library/debian:wheezy
+```
+
+### Template variables
+
+Inside templates, all fields of the corresponding JSON / YAML output can be accessed in pipeline
+expressions. The first letter of all field names is capitalized, with the exception of manifests
+that are directly returned from the registry by using `docker-ls tag --raw-manifest`: for
+those, the JSON / YAML field names are unchanged.
 
 ### Environment variables
 

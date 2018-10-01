@@ -19,3 +19,7 @@ Initial release
 ## 0.3.1
 
   * Fix recursion in `docker-ls repositories`and `docker-ls tags`
+
+## 0.3.2
+
+  * Support golang templates for formatting output
