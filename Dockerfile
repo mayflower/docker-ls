@@ -6,8 +6,9 @@ ENV GOARCH=amd64
 ADD . /go/src/github.com/mayflower/docker-ls
 WORKDIR /go/src/github.com/mayflower/docker-ls
 RUN set -ex \
-  && go build github.com/mayflower/docker-ls/cli/docker-ls \
-  && go build github.com/mayflower/docker-ls/cli/docker-rm
+  && go generate  github.com/mayflower/docker-ls/lib/... \
+  && go build     github.com/mayflower/docker-ls/cli/docker-ls \
+  && go build     github.com/mayflower/docker-ls/cli/docker-rm
 
 # Target container that is produced by docker build
 FROM alpine:latest
