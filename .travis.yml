@@ -1,1 +1,42 @@
-language: go
+language: minimal
+dist: xenial
+addons:
+  apt:
+    sources:
+      - docker-xenial
+
+# Required Variables via Travis CI Project Page:
+# DOCKER_USER -> Username to login to hub.docker.com
+# DOCKER_PASS -> Password to loigin to hub.docker.com
+# DOCKER_REPO -> Image + Repository Name: example/docker-ls
+
+env:
+  ADD_TAG="latest"
+
+before_install:
+# Pull Kaniko Image
+- docker pull gcr.io/kaniko-project/executor:latest
+# Add docker-retag executable
+- wget -q https://github.com/joshdk/docker-retag/releases/download/0.0.2/docker-retag && chmod +x docker-retag
+# Login to hub.docker.com
+- echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin
+
+script:
+# Build Image via kaniko
+- docker run
+    -v "$TRAVIS_BUILD_DIR":/workspace
+    -v $HOME/.docker:/kaniko/.docker
+  gcr.io/kaniko-project/executor:latest
+    --context=/workspace
+    --verbosity=info
+    --destination=$DOCKER_REPO:$TRAVIS_COMMIT
+
+# Retag image for other tags
+- for i in "$ADD_TAG $TRAVIS_TAG";
+  do
+    ./docker-retag $DOCKER_REPO:$TRAVIS_COMMIT $i;
+  done
+
+# # don't notify me when things fail
+# notifications:
+#   email: false
