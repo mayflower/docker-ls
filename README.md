@@ -121,6 +121,7 @@ Several subcommands are available
 By default, `docker-ls` uses the token based authentication flow for authentication unless
 basic auth is requested explicitly (see below). If no crendentials are specified, `docker-ls`
 will automatically get the credentials from the docker CLI (if logged in via `docker login`).
+`docker-ls` implicitly uses the same credential helpers userd by docker.
 
 Logging into Amazon ECR requires basic auth.
 
