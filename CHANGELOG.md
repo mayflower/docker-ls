@@ -23,3 +23,9 @@ Initial release
 ## 0.3.2
 
   * Support golang templates for formatting output
+
+## 0.4.0
+
+  * Retrive and use credentials from Docker CLI
+  * Move to go modules
+  * Bump dependenciess
