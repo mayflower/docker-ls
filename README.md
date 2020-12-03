@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mayflower/docker-ls.svg?branch=master)](https://travis-ci.org/DirtyHairy/node-libxl)
+[![Build Status](https://travis-ci.org/mayflower/docker-ls.svg?branch=master)](https://travis-ci.org/mayflower/docker-ls)
 
 # What is it?
 
