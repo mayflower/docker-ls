@@ -118,7 +118,7 @@ Several subcommands are available
 
 ### Authentication and credentials
 
-By default, `docker-ls` uses the token based authentification flow for authentication unless
+By default, `docker-ls` uses the token based authentication flow for authentication unless
 basic auth is requested explicitly (see below). If no crendentials are specified, `docker-ls`
 will automatically get the credentials from the docker CLI (if logged in via `docker login`).
 
