@@ -2,6 +2,10 @@ package lib
 
 import (
 	"flag"
+	"net/url"
+	"os"
+
+	"github.com/docker/cli/cli/config"
 )
 
 type RegistryCredentials struct {
@@ -28,6 +32,21 @@ func (r *RegistryCredentials) Password() string {
 
 func (r *RegistryCredentials) SetPassword(password string) {
 	r.password = password
+}
+
+func (r *RegistryCredentials) IsBlank() bool {
+	return r.User() == "" && r.Password() == ""
+}
+
+func (r *RegistryCredentials) LoadCredentialsFromDockerConfig(url url.URL) {
+	authConfig, err := config.LoadDefaultConfigFile(os.Stderr).GetCredentialsStore(url.Host).Get(url.Host)
+
+	if err != nil {
+		return
+	}
+
+	r.SetUser(authConfig.Username)
+	r.SetPassword(authConfig.Password)
 }
 
 func NewRegistryCredentials(user, password string) RegistryCredentials {

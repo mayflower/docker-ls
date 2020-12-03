@@ -114,6 +114,12 @@ func (c *Config) Validate() error {
 	return nil
 }
 
+func (c *Config) LoadCredentialsFromDockerConfig() {
+	if c.credentials.IsBlank() {
+		c.credentials.LoadCredentialsFromDockerConfig(c.registryUrl)
+	}
+}
+
 func NewConfig() Config {
 	return Config{
 		registryUrl:           DEFAULT_REGISTRY_URL,

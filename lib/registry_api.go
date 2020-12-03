@@ -69,6 +69,8 @@ func NewRegistryApi(cfg Config) (api RegistryApi, err error) {
 		return
 	}
 
+	cfg.LoadCredentialsFromDockerConfig()
+
 	registry := &registryApi{
 		cfg: cfg,
 	}
