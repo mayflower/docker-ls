@@ -116,6 +116,14 @@ Several subcommands are available
    used to dump the full manifest. The `--parse-history` option can be used to display
    the JSON-encoded history within the manifest.
 
+### Authentication and credentials
+
+By default, `docker-ls` uses the token based authentification flow for authentication unless
+basic auth is requested explicitly (see below). If no crendentials are specified, `docker-ls`
+will automatically get the credentials from the docker CLI (if logged in via `docker login`).
+
+Logging into Amazon ECR requires basic auth.
+
 ### Important command line flags
 
 This list is not exhaustive; please consult the command line (`-h`) help for all options.
