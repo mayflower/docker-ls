@@ -36,6 +36,7 @@ type Config struct {
 	maxConcurrentRequests uint
 	basicAuth             bool
 	allowInsecure         bool
+	userAgent             string
 }
 
 func (u *urlValue) String() string {
@@ -50,6 +51,7 @@ func (c *Config) BindToFlags(flags *flag.FlagSet) {
 	flags.UintVar(&c.maxConcurrentRequests, "max-requests", c.maxConcurrentRequests, "concurrent API request limit")
 	flags.BoolVar(&c.basicAuth, "basic-auth", c.basicAuth, "use basic auth instead of token auth")
 	flags.BoolVar(&c.allowInsecure, "allow-insecure", c.allowInsecure, "ignore SSL certificate validation errors")
+	flags.StringVar(&c.userAgent, "user-agent", c.userAgent, "override http user-agent header")
 
 	c.credentials.BindToFlags(flags)
 }
@@ -64,6 +66,10 @@ func (c *Config) Credentials() auth.RegistryCredentials {
 
 func (c *Config) AllowInsecure() bool {
 	return c.allowInsecure
+}
+
+func (c *Config) UserAgent() string {
+	return c.userAgent
 }
 
 func (c *Config) RegistryUrl() *url.URL {
@@ -102,6 +108,10 @@ func (c *Config) SetAllowInsecure(allowInsecure bool) {
 	c.allowInsecure = allowInsecure
 }
 
+func (c *Config) SetUserAgent(userAgent string) {
+	c.userAgent = userAgent
+}
+
 func (c *Config) Validate() error {
 	if c.pageSize == 0 {
 		return errors.New("pagesize must be nonzero")
@@ -126,5 +136,6 @@ func NewConfig() Config {
 		pageSize:              100,
 		maxConcurrentRequests: 5,
 		basicAuth:             false,
+		userAgent:             ApplicationName(),
 	}
 }

@@ -21,6 +21,9 @@ package %s
 func init() {
 	version := %s
 	dynamicVersion = &version
+
+	shortVersion := %s
+	dynamicShortVersion = &shortVersion
 }
 `
 )
@@ -127,7 +130,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = fmt.Fprintf(file, TEMPLATE, pkg, quote(version()))
+	_, err = fmt.Fprintf(file, TEMPLATE, pkg, quote(version()), quote(STATIC_VERSION))
 	if err != nil {
 		panic(err)
 	}
