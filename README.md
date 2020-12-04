@@ -134,7 +134,8 @@ This list is not exhaustive; please consult the command line (`-h`) help for all
    [docker hub](https://hub.docker.com/).
  * `--user <user> (-u)` Username for authentication.
  * `--password <password> (-p)` Password for authentication.
- * `--interactive-password (-i)` Read the password from an interactive prompt.
+ * `--user-agent <agent string>` Use a custom user agent.
+ * `--interactive-password(-i)` Read the password from an interactive prompt.
  * `--level <depth> (-l)` The `repositories` and `tags` subcommands support this option
    for recursive output. Depths 0 (default) and 1 are supported. Please note
    the recursing means more API requests and may be slow.
