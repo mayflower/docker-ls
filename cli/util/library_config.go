@@ -18,6 +18,7 @@ type LibraryFlags struct {
 	Username              string
 	Password              string
 	AllowInsecure         bool
+	UserAgent             string
 }
 
 func AddLibraryConfigToFlags(flags *pflag.FlagSet) {
@@ -42,6 +43,8 @@ func AddLibraryConfigToFlags(flags *pflag.FlagSet) {
 	flags.Bool("allow-insecure", defaultConfig.AllowInsecure(),
 		"ignore SSL certificate validation errors",
 	)
+	flags.String("user-agent", defaultConfig.UserAgent(),
+		"override http user-agent header")
 }
 
 func LibraryConfigFromViper() (config *lib.Config, err error) {
@@ -59,6 +62,7 @@ func LibraryConfigFromViper() (config *lib.Config, err error) {
 	c.Credentials().SetPassword(viper.GetString("password"))
 	c.Credentials().SetUser(viper.GetString("user"))
 	c.SetAllowInsecure(viper.GetBool("allow-insecure"))
+	c.SetUserAgent(viper.GetString("user-agent"))
 
 	config = &c
 	return
