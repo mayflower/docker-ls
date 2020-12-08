@@ -118,9 +118,17 @@ Several subcommands are available
 
 ### Authentication and credentials
 
-By default, `docker-ls` uses the token based authentication flow for authentication unless
-Basic auth is requested explicitly (see below). If no credentials are specified, `docker-ls`
-will automatically get the credentials from the docker CLI (if logged in via `docker login`).
+`docker-ls` supports the following authentication methods:
+
+ * "Classic" docker registry [token authentication](https://docs.docker.com/registry/spec/auth/).
+   This is the default if credentials are supplied on the command line. If credentials are taken
+   from a previous `docker login`, this is the default unless the credentials contains an identity
+   token.
+ * [OAuth2 authentication](https://docs.docker.com/registry/spec/auth/oauth/). This is used if
+   the credentials are taken from a previous `docker login` and contain an identity token.
+ * Basic auth. This needs to be requested explicitly on the CLI.
+
+Credentials are automatically taken from a previous `docker login` or specified on the command line.
 `docker-ls` implicitly uses the same
 [credential store and helpers](https://docs.docker.com/engine/reference/commandline/login/#credentials-store)
 used by docker.
