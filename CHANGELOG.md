@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+  * Support credential helpers that use OAuth2 Token Authentication.
+
 ## 0.4.1
 
   * Support custom user agent
@@ -7,9 +11,9 @@
 
 ## 0.4.0
 
-  * Retrive and use credentials from Docker CLI
+  * Retrieve and use credentials from Docker CLI
   * Move to go modules
-  * Bump dependenciess
+  * Bump dependencies
 
 ## 0.3.2
 

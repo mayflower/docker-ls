@@ -10,8 +10,8 @@ digests associated with tags.
 
 Only
 [V2 registries](https://github.com/docker/distribution)
- are supported. Both HTTP basic auth and docker style
-[token authentication](https://github.com/docker/distribution/blob/master/docs/spec/auth/token.md)
+are supported. Both HTTP Basic auth and Docker style
+[token authentication](https://docs.docker.com/registry/spec/auth/token/)
 are supported for authentication.
 
 # Installation
@@ -21,11 +21,11 @@ Six ways there are to attain enlightenment.
 ## Precompiled binaries
 
 Just download precompiled binaries for your platform from
-[github](https://github.com/mayflower/docker-ls/releases).
+[GitHub](https://github.com/mayflower/docker-ls/releases).
 
 ## MacOS / Homebrew
 
-You can install `docker-ls` directly from homebrew:
+You can install `docker-ls` directly from Homebrew:
 
     brew install docker-ls
 
@@ -119,17 +119,19 @@ Several subcommands are available
 ### Authentication and credentials
 
 By default, `docker-ls` uses the token based authentication flow for authentication unless
-basic auth is requested explicitly (see below). If no crendentials are specified, `docker-ls`
+Basic auth is requested explicitly (see below). If no credentials are specified, `docker-ls`
 will automatically get the credentials from the docker CLI (if logged in via `docker login`).
-`docker-ls` implicitly uses the same credential helpers userd by docker.
+`docker-ls` implicitly uses the same
+[credential store and helpers](https://docs.docker.com/engine/reference/commandline/login/#credentials-store)
+used by docker.
 
-Logging into Amazon ECR requires basic auth.
+Logging into Amazon ECR requires Basic auth.
 
 ### Important command line flags
 
 This list is not exhaustive; please consult the command line (`-h`) help for all options.
 
- * `--registry <url> (-r)` Connect to the registry at <url>. The URL must include the protocol
+ * `--registry <url> (-r)` Connect to the registry at `<url>`. The URL must include the protocol
    (http / https). By default, `docker-ls` targets the official
    [docker hub](https://hub.docker.com/).
  * `--user <user> (-u)` Username for authentication.
@@ -138,7 +140,7 @@ This list is not exhaustive; please consult the command line (`-h`) help for all
  * `--interactive-password(-i)` Read the password from an interactive prompt.
  * `--level <depth> (-l)` The `repositories` and `tags` subcommands support this option
    for recursive output. Depths 0 (default) and 1 are supported. Please note
-   the recursing means more API requests and may be slow.
+   recursion means more API requests and may be slow.
  * `--json (-j)` Switch output format from YAML to JSON.
  * `--template (-t)` Use a named golang template from the configuration for output (see below)
  * `--template-source` Use the specified template for output (see below)

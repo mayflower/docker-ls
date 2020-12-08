@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -23,23 +24,37 @@ func (a *authenticator) Authenticate(c *Challenge, ignoreCached bool) (t Token, 
 		}
 	}
 
+	// Try OAuth2 authentication first, and then legacy JWT tokens.
+	var decodedResponse authResponse
+	if refreshToken := a.credentials.IdentityToken(); refreshToken != "" {
+		decodedResponse, err = a.fetchTokenOAuth2(c, refreshToken)
+	} else {
+		decodedResponse, err = a.fetchTokenJWT(c)
+	}
+	if err != nil {
+		return
+	}
+
+	a.cache.Set(c, decodedResponse)
+	t = newToken(decodedResponse.Token, true)
+
+	return
+}
+
+func (a *authenticator) fetchTokenJWT(c *Challenge) (decodedResponse authResponse, err error) {
 	requestUrl := c.buildRequestUrl()
-
 	authRequest, err := http.NewRequest("GET", requestUrl.String(), strings.NewReader(""))
-
 	if err != nil {
 		return
 	}
 
 	username := a.credentials.User()
 	password := a.credentials.Password()
-
 	if username != "" || password != "" {
 		authRequest.SetBasicAuth(username, password)
 	}
 
 	authResponse, err := a.httpClient.Do(authRequest)
-
 	if err != nil {
 		return
 	}
@@ -53,15 +68,28 @@ func (a *authenticator) Authenticate(c *Challenge, ignoreCached bool) (t Token, 
 		return
 	}
 
-	decodedResponse, err := decodeAuthResponse(authResponse.Body)
+	decodedResponse, err = decodeAuthResponse(authResponse.Body)
+	return
+}
 
+func (a *authenticator) fetchTokenOAuth2(c *Challenge, refreshToken string) (decodedResponse authResponse, err error) {
+	authResponse, err := a.httpClient.PostForm(c.realm.String(), url.Values{
+		"grant_type":    {"refresh_token"},
+		"service":       {c.service},
+		"client_id":     {"docker-ls"},
+		"scope":         {strings.Join(c.scope, " ")},
+		"refresh_token": {refreshToken},
+	})
 	if err != nil {
 		return
 	}
 
-	a.cache.Set(c, decodedResponse)
-	t = newToken(decodedResponse.Token, true)
+	if authResponse.StatusCode != http.StatusOK {
+		err = errors.New(fmt.Sprintf("OAuth2 authentication against auth server failed with code %d", authResponse.StatusCode))
+		return
+	}
 
+	decodedResponse, err = decodeAuth2Response(authResponse.Body)
 	return
 }
 
