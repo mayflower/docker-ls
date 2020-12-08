@@ -9,8 +9,9 @@ import (
 )
 
 type RegistryCredentials struct {
-	user     string
-	password string
+	user          string
+	password      string
+	identityToken string
 }
 
 func (c *RegistryCredentials) BindToFlags(flags *flag.FlagSet) {
@@ -34,6 +35,10 @@ func (r *RegistryCredentials) SetPassword(password string) {
 	r.password = password
 }
 
+func (r *RegistryCredentials) IdentityToken() string {
+	return r.identityToken
+}
+
 func (r *RegistryCredentials) IsBlank() bool {
 	return r.User() == "" && r.Password() == ""
 }
@@ -45,8 +50,12 @@ func (r *RegistryCredentials) LoadCredentialsFromDockerConfig(url url.URL) {
 		return
 	}
 
-	r.SetUser(authConfig.Username)
-	r.SetPassword(authConfig.Password)
+	if authConfig.IdentityToken != "" {
+		r.identityToken = authConfig.IdentityToken
+	} else {
+		r.SetUser(authConfig.Username)
+		r.SetPassword(authConfig.Password)
+	}
 }
 
 func NewRegistryCredentials(user, password string) RegistryCredentials {
