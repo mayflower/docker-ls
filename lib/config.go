@@ -3,6 +3,7 @@ package lib
 import (
 	"errors"
 	"flag"
+	"log"
 	"net/url"
 
 	"github.com/mayflower/docker-ls/lib/auth"
@@ -125,6 +126,7 @@ func (c *Config) Validate() error {
 }
 
 func (c *Config) LoadCredentialsFromDockerConfig() {
+	log.Printf("load credentials? %t", c.credentials.IsBlank())
 	if c.credentials.IsBlank() {
 		c.credentials.LoadCredentialsFromDockerConfig(c.registryUrl)
 	}

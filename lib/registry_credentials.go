@@ -2,6 +2,7 @@ package lib
 
 import (
 	"flag"
+	"log"
 	"net/url"
 	"os"
 
@@ -44,11 +45,14 @@ func (r *RegistryCredentials) IsBlank() bool {
 }
 
 func (r *RegistryCredentials) LoadCredentialsFromDockerConfig(url url.URL) {
-	authConfig, err := config.LoadDefaultConfigFile(os.Stderr).GetCredentialsStore(url.Host).Get(url.Host)
+	dockerConfig := config.LoadDefaultConfigFile(os.Stderr)
+	log.Printf("docker config: %#v", dockerConfig)
+	authConfig, err := dockerConfig.GetCredentialsStore(url.Host).Get(url.Host)
 
 	if err != nil {
 		return
 	}
+	log.Printf("docker credentials: %#v", authConfig)
 
 	if authConfig.IdentityToken != "" {
 		r.identityToken = authConfig.IdentityToken

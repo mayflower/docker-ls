@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spf13/viper"
-
 	"github.com/mayflower/docker-ls/cli/docker-ls/tags"
 	"github.com/mayflower/docker-ls/cli/util"
 	"github.com/mayflower/docker-ls/lib"
@@ -17,7 +15,6 @@ var tagsCmd = &cobra.Command{
 	Short: "List tags",
 	Long:  "List all tags for a repository",
 	Run: func(cmd *cobra.Command, args []string) {
-		viper.BindPFlags(cmd.Flags())
 
 		var err error
 
