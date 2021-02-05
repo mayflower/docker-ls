@@ -161,6 +161,11 @@ This list is not exhaustive; please consult the command line (`-h`) help for all
    (`--manifest-version 2`, default) from the registry. Please note that deleting manifests
    from registry version >= 2.3 will work **only** with content digests from a V2.2
    manifest.
+ * `--debug` Enable debug output.
+
+   WARNING: This is exactly what the name suggests: debugging output. It contains raw
+   data structures, may include your credentials in verbatim and may or may not help you.
+   Use with care.
 
 ### Examples
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+  * Support debug output. Thanks to nyarly for the PR.
+
 ## 0.5.0
 
   * Support credential helpers that use OAuth2 Token Authentication.
