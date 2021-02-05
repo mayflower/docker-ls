@@ -133,7 +133,7 @@ Credentials are automatically taken from a previous `docker login` or specified 
 [credential store and helpers](https://docs.docker.com/engine/reference/commandline/login/#credentials-store)
 used by docker.
 
-Logging into Amazon ECR requires Basic auth.
+Logging into Amazon ECR requires Basic auth, the same goes for Google GCR.
 
 ### Important command line flags
 
