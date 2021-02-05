@@ -47,6 +47,7 @@ func (r *RegistryCredentials) IsBlank() bool {
 func (r *RegistryCredentials) LoadCredentialsFromDockerConfig(url url.URL) {
 	dockerConfig := config.LoadDefaultConfigFile(os.Stderr)
 	log.Printf("docker config: %#v", dockerConfig)
+
 	authConfig, err := dockerConfig.GetCredentialsStore(url.Host).Get(url.Host)
 
 	if err != nil {

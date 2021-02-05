@@ -1,6 +1,9 @@
 package util
 
 import (
+	"log"
+	"os"
+
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -13,6 +16,7 @@ const (
 	CLI_OPTION_MANIFEST_VERSION
 	CLI_OPTION_INTERACTIVE_PASSWORD
 	CLI_OPTION_TABLE_OUTPUT
+	CLI_OPTION_DEBUG
 	CLI_OPTION_TEMPLATE
 	CLI_OPTION_TEMPLATE_SOURCE
 )
@@ -30,6 +34,7 @@ type CliConfig struct {
 	JsonOutput          bool
 	InteractivePassword bool
 	TableOutput         bool
+	Debug               bool
 	Template            string
 	TemplateSource      string
 	templateRepository  TemplateRepository
@@ -66,6 +71,10 @@ func AddCliConfigToFlags(flags *pflag.FlagSet, options uint) {
 		flags.Bool("table", c.TableOutput, "output table instead of YAML")
 	}
 
+	if options&CLI_OPTION_DEBUG != 0 {
+		flags.Bool("debug", c.Debug, "emit debugging logs WARNING THIS MAY INCLUDE SENSITIVE AUTHENTICATION DATA")
+	}
+
 	if options&CLI_OPTION_TEMPLATE != 0 {
 		flags.StringP("template", "t", c.Template, "use named template from config for output")
 	}
@@ -84,11 +93,18 @@ func CliConfigFromViper() (cfg *CliConfig, err error) {
 		ManifestVersion:     uint(viper.GetInt("manifest-version")),
 		InteractivePassword: viper.GetBool("interactive-password"),
 		TableOutput:         viper.GetBool("table"),
+		Debug:               viper.GetBool("debug"),
 		Template:            viper.GetString("template"),
 		TemplateSource:      viper.GetString("template-source"),
 	}
 
 	cfg.templateRepository, err = TemplateRepositoryFromConfig()
+
+	if cfg.Debug {
+		log.SetOutput(os.Stderr)
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
+		log.Printf("debug logging enabled")
+	}
 
 	return
 }

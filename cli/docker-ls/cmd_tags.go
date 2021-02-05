@@ -15,7 +15,6 @@ var tagsCmd = &cobra.Command{
 	Short: "List tags",
 	Long:  "List all tags for a repository",
 	Run: func(cmd *cobra.Command, args []string) {
-
 		var err error
 
 		var libraryConfig *lib.Config

@@ -127,6 +127,7 @@ func (c *Config) Validate() error {
 
 func (c *Config) LoadCredentialsFromDockerConfig() {
 	log.Printf("load credentials? %t", c.credentials.IsBlank())
+
 	if c.credentials.IsBlank() {
 		c.credentials.LoadCredentialsFromDockerConfig(c.registryUrl)
 	}

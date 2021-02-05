@@ -14,9 +14,10 @@ var rootCmd = &cobra.Command{
 	Use:   "docker-rm <repository:tag>",
 	Short: "Delete a tag",
 	Long:  "Delete a tag in a given repository",
-	Run: func(cmd *cobra.Command, args []string) {
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		viper.BindPFlags(cmd.Flags())
-
+	},
+	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 
 		var libraryConfig *lib.Config
@@ -46,14 +47,10 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	var configFile string
-	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "",
-		"read config from specified file (default: look for config in home directory)",
-	)
+	util.SetupViper(rootCmd)
 
-	flags := rootCmd.Flags()
-	util.AddCliConfigToFlags(flags, util.CLI_OPTION_INTERACTIVE_PASSWORD)
-	util.AddLibraryConfigToFlags(flags)
+	util.AddCliConfigToFlags(rootCmd.PersistentFlags(), util.CLI_OPTION_DEBUG)
+	util.AddCliConfigToFlags(rootCmd.Flags(), util.CLI_OPTION_INTERACTIVE_PASSWORD)
 
-	util.SetupViper(configFile)
+	util.AddLibraryConfigToFlags(rootCmd.Flags())
 }

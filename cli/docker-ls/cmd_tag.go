@@ -16,8 +16,6 @@ var tagCmd = &cobra.Command{
 	Short: "Show tag details",
 	Long:  "Detailed inspection of a particular tag",
 	Run: func(cmd *cobra.Command, args []string) {
-		viper.BindPFlags(cmd.Flags())
-
 		var err error
 
 		var libraryConfig *lib.Config

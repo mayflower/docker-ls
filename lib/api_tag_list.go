@@ -50,6 +50,7 @@ func (r *tagListRequestContext) path() string {
 
 func (r *tagListRequestContext) validateApiResponse(response *http.Response, initialRequest bool) error {
 	log.Printf("api response: %#v", response)
+
 	switch response.StatusCode {
 	case http.StatusUnauthorized, http.StatusForbidden:
 		return genericAuthorizationError

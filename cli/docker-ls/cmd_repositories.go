@@ -8,7 +8,6 @@ import (
 	"github.com/mayflower/docker-ls/cli/util"
 	"github.com/mayflower/docker-ls/lib"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var repositoriesCmd = &cobra.Command{
@@ -16,8 +15,6 @@ var repositoriesCmd = &cobra.Command{
 	Short: "List repositories",
 	Long:  "List all repositories",
 	Run: func(cmd *cobra.Command, args []string) {
-		viper.BindPFlags(cmd.Flags())
-
 		var err error
 
 		var libraryConfig *lib.Config

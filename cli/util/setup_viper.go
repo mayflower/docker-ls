@@ -10,7 +10,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SetupViper(configFile string) {
+func SetupViper(cmd *cobra.Command) {
+	var configFile string
+
+	cmd.PersistentFlags().StringVarP(&configFile, "config", "c", "",
+		"read config from specified file (default: look for config in home directory)",
+	)
+
 	cobra.OnInitialize(func() {
 		if configFile != "" {
 			viper.SetConfigFile(configFile)
