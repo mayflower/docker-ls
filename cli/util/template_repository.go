@@ -1,7 +1,6 @@
 package util
 
 import (
-	"errors"
 	"fmt"
 	"text/template"
 
@@ -44,7 +43,7 @@ func TemplateRepositoryFromConfig() (t TemplateRepository, err error) {
 		tpl := template.New(name)
 
 		if _, e := tpl.Parse(s); e != nil {
-			err = errors.New(fmt.Sprintf("syntax error in template '%s': %v", name, e))
+			err = fmt.Errorf("syntax error in template '%s': %v", name, e)
 			return
 		}
 
