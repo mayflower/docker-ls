@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -22,7 +21,7 @@ func ParseChallenge(challengeHeader string) (ch *Challenge, err error) {
 	match := challengeRegex.FindAllStringSubmatch(challengeHeader, -1)
 
 	if len(match) != 1 {
-		err = errors.New(fmt.Sprintf("malformed challenge header: '%s'", challengeHeader))
+		err = fmt.Errorf("malformed challenge header: '%s'", challengeHeader)
 	} else {
 		var parsedRealm *url.URL
 		parsedRealm, err = url.Parse(match[0][1])

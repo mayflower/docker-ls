@@ -3,7 +3,6 @@ package util
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -50,7 +49,7 @@ func SerializeToStdout(data interface{}, cfg *CliConfig) error {
 func namedTemplateToStdout(data interface{}, cfg *CliConfig) (err error) {
 	template := cfg.templateRepository.Get(cfg.Template)
 	if template == nil {
-		err = errors.New(fmt.Sprintf("no template with name '%s'", cfg.Template))
+		err = fmt.Errorf("no template with name '%s'", cfg.Template)
 		return
 	}
 

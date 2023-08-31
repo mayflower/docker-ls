@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -64,7 +63,7 @@ func (a *authenticator) fetchTokenJWT(c *Challenge) (decodedResponse authRespons
 	}
 
 	if authResponse.StatusCode != http.StatusOK {
-		err = errors.New(fmt.Sprintf("authentication against auth server failed with code %d", authResponse.StatusCode))
+		err = fmt.Errorf("authentication against auth server failed with code %d", authResponse.StatusCode)
 		return
 	}
 
@@ -85,7 +84,7 @@ func (a *authenticator) fetchTokenOAuth2(c *Challenge, refreshToken string) (dec
 	}
 
 	if authResponse.StatusCode != http.StatusOK {
-		err = errors.New(fmt.Sprintf("OAuth2 authentication against auth server failed with code %d", authResponse.StatusCode))
+		err = fmt.Errorf("OAuth2 authentication against auth server failed with code %d", authResponse.StatusCode)
 		return
 	}
 
